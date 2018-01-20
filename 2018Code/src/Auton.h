@@ -21,7 +21,7 @@ public:
 Auton(Drivetrain* drive);
 void Drive(double speed, double dist);
 void Rotate(double angle);
-void Arc(double speed, double dist, double radius);
+void Arc(double speed, double turnAngle, double radius);
 
 
 
@@ -33,6 +33,16 @@ private:
 		Drivetrain* drive;
 
 		Timer timer;
+
+		double gearRatioHi;
+		double gearRatioLo;
+		double wheelR;
+		double encCountsPerRev;
+		double pi = 3.14159;
+		double Track;
+
+		double ViSetPt;
+		double VoSetPt;
 
 		double counterPerIn = 1950;
 		double Ptheta = 0;
@@ -50,7 +60,8 @@ private:
 		double Ra = 0;
 		double Va = 0;
 		double VErr = 0;
-
+		double t = 0;
+		double theta = 0;
 
 	};
 

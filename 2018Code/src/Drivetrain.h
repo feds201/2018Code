@@ -17,6 +17,7 @@ public:
 
 	Drivetrain(uint8_t L1, uint8_t L2, uint8_t R1, uint8_t R2, uint8_t gyro, int PCM, int shifterFWD, int shifterREV);
 	void Drive(float fwd, float trn, bool autoHeading);
+	void directSet(float left, float right);
 	void Set(float Left, float Right);
 	void Shift();
 	int * GetEncVel();
