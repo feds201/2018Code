@@ -6,7 +6,9 @@ Drivetrain::Drivetrain(uint8_t L1, uint8_t L2, uint8_t R1, uint8_t R2, uint8_t g
 
 	list = new struct driveList;
 
-	list->gyro = new PigeonIMU(gyro);
+	list->talon = new TalonSRX(gyro);
+
+	list->gyro = new PigeonIMU(list->talon);
 
 	list->gyro->SetFusedHeading(0, 10);
 
@@ -20,7 +22,7 @@ Drivetrain::Drivetrain(uint8_t L1, uint8_t L2, uint8_t R1, uint8_t R2, uint8_t g
 	list->L2ID = L2;
 	list->R2ID = R2;
 
-	list->shifter = new DoubleSolenoid(list->pcm, list->shifterFWD, list->shifterREV);
+	list->shifter = new DoubleSolenoid(PCM, shifterFWD, shifterREV);
 
 	list->pcm = PCM;
 	list->shifterFWD = shifterFWD;
@@ -65,7 +67,12 @@ Drivetrain::Drivetrain(uint8_t L1, uint8_t L2, uint8_t R1, uint8_t R2, uint8_t g
 
 void Drivetrain::Drive(float fwd, float trn, bool autoHeading){
 
-	if(trn != 0 && !autoHeading)
+	SmartDashboard::PutNumber("Gyro", getGyroAngle());
+	SmartDashboard::PutNumber("LEnc", GetEncPos()[0]);
+	SmartDashboard::PutNumber("REnc", GetEncPos()[1]);
+
+
+	if(trn != 0 && autoHeading)
 		list->gyro->SetFusedHeading(0, 10);
 
 	if(autoHeading){

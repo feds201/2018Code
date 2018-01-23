@@ -43,11 +43,11 @@ void Auton::Rotate(double angle){
 			list->drive->Drive(0, -0.3, false);
 		}
 
-		list->drive->Drive(0, 0, false);
-		list->drive->setGyroAngle(0);
-		list->drive->SetEncPos(0, 0);
-
 	}
+
+	list->drive->Drive(0, 0, false);
+	list->drive->setGyroAngle(0);
+	list->drive->SetEncPos(0, 0);
 
 
 }
