@@ -38,15 +38,10 @@ Drivetrain::Drivetrain(uint8_t L1, uint8_t L2, uint8_t R1, uint8_t R2, uint8_t g
 	list->Left2->ConfigNominalOutputReverse(0, 10);
 	list->Right2->ConfigNominalOutputReverse(0, 10);
 
-	list->prefs->PutDouble("P", 0.0);
-	list->prefs->PutDouble("I", 0.0);
-	list->prefs->PutDouble("D", 0.0);
-	list->prefs->PutDouble("F", 0.1023);
-
-	list->P = list->prefs->GetDouble("P");
-	list->I = list->prefs->GetDouble("I");
-	list->D = list->prefs->GetDouble("D");
-	list->F = list->prefs->GetDouble("F");
+	list->prefs->PutDouble("P", list->P);
+	list->prefs->PutDouble("I", list->I);
+	list->prefs->PutDouble("D", list->D);
+	list->prefs->PutDouble("F", list->F);
 
 	list->Left2->ConfigSelectedFeedbackSensor(FeedbackDevice::CTRE_MagEncoder_Absolute, 0, 10);
 	list->Right2->ConfigSelectedFeedbackSensor(FeedbackDevice::CTRE_MagEncoder_Absolute, 0, 10);
@@ -76,11 +71,11 @@ void Drivetrain::Drive(float fwd, float trn, bool autoHeading){
 		list->gyro->SetFusedHeading(0, 10);
 
 	if(autoHeading){
-		list->leftSet = 10000*((trn+(list->gyro->GetFusedHeading()*0.07)) - fwd);
-		list->rightSet = 10000*((trn+(list->gyro->GetFusedHeading()*0.07)) + fwd);
+		list->leftSet = list->maxSpeed*((trn+(list->gyro->GetFusedHeading()*0.07)) - fwd);
+		list->rightSet = list->maxSpeed*((trn+(list->gyro->GetFusedHeading()*0.07)) + fwd);
 	}else{
-		list->leftSet = 10000*(trn-fwd);
-		list->rightSet = 10000*(trn+fwd);
+		list->leftSet = list->maxSpeed*(trn-fwd);
+		list->rightSet = list->maxSpeed*(trn+fwd);
 	}
 
 	if(list->P != list->prefs->GetDouble("P") or list->I != list->prefs->GetDouble("I") or list->D != list->prefs->GetDouble("D") or list->F != list->prefs->GetDouble("F")){

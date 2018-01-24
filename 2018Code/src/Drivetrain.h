@@ -30,6 +30,13 @@ private:
 
 	struct driveList{
 
+		double P = 0;
+		double I = 0;
+		double D = 0;
+		double F = 0.1023;
+
+		int maxSpeed = 10000;
+
 		WPI_TalonSRX *Left1;
 		WPI_TalonSRX *Left2;
 		WPI_TalonSRX *Right1;
@@ -45,11 +52,6 @@ private:
 		Preferences *prefs;
 
 		PigeonIMU *gyro;
-
-		double P;
-		double I;
-		double D;
-		double F;
 
 		double leftSet;
 		double rightSet;
