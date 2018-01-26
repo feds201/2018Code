@@ -82,3 +82,12 @@ void Elevator::Refresh(){
 		Move(-.35);
 
 }
+
+void Elevator::Push(){
+
+	if(list->solenoid->Get() == frc::DoubleSolenoid::Value::kForward)
+		list->solenoid->Set(frc::DoubleSolenoid::Value::kReverse);
+	else
+		list->solenoid->Set(frc::DoubleSolenoid::Value::kForward);
+
+}
