@@ -4,25 +4,31 @@
 #include"Drivetrain.h"
 #include"Auton.h"
 #include"EdgeDetection.h"
+#include "Elevator.h"
+#include "Pickup.h"
 #include <SmartDashboard/SendableChooser.h>
 #include <iostream>
 
 class Robot : public frc::SampleRobot {
 
 	Drivetrain drive;
-	Joystick joy;
+	Joystick joy, joy2;
 	Compressor comp;
 	Auton auton;
-	Edge shift;
+	Edge shift, pickup, eject;
+	Edge bottom, middle, top;
+	Pickup pick;
+	Elevator ele;
 	WPI_TalonSRX m1;
 	WPI_TalonSRX m2;
 	frc::SendableChooser<std::string> chooser;
 	frc::SendableChooser<std::string> lrchooser;
+	PowerDistributionPanel pdp;
 
 public:
 	Robot():
 
-	drive(3, 4, 5, 7, 6, 8, 0, 1), joy(0), comp(8), auton(&drive), shift(joy.GetRawButton(1)), m1(1), m2(2)
+	drive(3, 4, 5, 7, 6, 8, 0, 1), joy(0), joy2(1), comp(8), auton(&drive), shift(joy2.GetRawButton(1)), pickup(joy.GetRawButton(6)), eject(joy.GetRawButton(5)), bottom(joy.GetRawButton(1)), middle(joy.GetRawButton(2)), top(joy.GetRawButton(4)), pick(8, 3, 4), ele(5, 8, 3, 4, 0, 1 , 2), m1(1), m2(2), pdp(0)
 
 	{
 
@@ -245,12 +251,43 @@ public:
 
 		while (IsOperatorControl() && IsEnabled()) {
 
-			shift.update(joy.GetRawButton(1));
+			pickup.update(joy.GetRawButton(6));
+			eject.update(joy.GetRawButton(5));
+			bottom.update(joy.GetRawButton(1));
+			middle.update(joy.GetRawButton(2));
+			top.update(joy.GetRawButton(4));
+
+			shift.update(joy2.GetRawButton(1));
+
+
+			if(pickup.isPressed())
+				pick.Toggle();
+
+			if(eject.isPressed())
+				ele.Push();
+
+			if(bottom.isPressed())
+				ele.Bottom();
+
+			if(middle.isPressed())
+				ele.Middle();
+
+			if(top.isPressed())
+				ele.Top();
 
 			if(shift.isPressed())
 				drive.Shift();
 
+			ele.Move(joy.GetRawAxis(2)-joy.GetRawAxis(3));
+
 			drive.Drive(deadzone(joy.GetRawAxis(1)), deadzone(joy.GetRawAxis(4)), true);
+
+			ele.Refresh();
+
+			SmartDashboard::PutNumber("Left Encoder Vel", drive.GetEncVel()[0]);
+			SmartDashboard::PutNumber("Right Encoder Vel", drive.GetEncVel()[1]);
+			SmartDashboard::PutNumber("Total Amps", pdp.GetTotalCurrent());
+			SmartDashboard::PutNumber("Total Power", pdp.GetTotalPower());
 
 			frc::Wait(0.005);
 		}
