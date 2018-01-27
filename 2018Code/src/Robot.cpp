@@ -62,6 +62,18 @@ public:
 
 	void Autonomous() {
 
+		double swDist = 152;
+		double alleyDist = 212.5;
+		double scDist = 307.65;
+		double swAlley = 30;
+		double scAlley = 30;
+		double swDistFinal = 30;
+		double scDistFinal = 30;
+		double swApproachDist = 30;
+		double scApproachDist = 30;
+		double SpeedFast = -.5;
+		double SpeedSlow = -.3;
+
 		std::string selected = chooser.GetSelected();
 		std::string side = lrchooser.GetSelected();
 		std::string gameInfo = frc::DriverStation::GetInstance().GetGameSpecificMessage();
@@ -131,58 +143,104 @@ public:
 				case 0 :
 					//LSL
 					SmartDashboard::PutString("Auton Info", "Robot on left, going for switch on left");
+						auton.Drive(SpeedFast, swDist);
+						auton.Rotate(-90);
+						auton.Drive(SpeedSlow, swApproachDist);
+						ele.Middle();
+						ele.Push();
 
 				break;
 
 				case 1 :
 					//LSR
 					SmartDashboard::PutString("Auton Info", "Robot on left, going for switch on right");
+						auton.Drive(SpeedFast, alleyDist);
+						auton.Rotate(-90);
+						auton.Drive(SpeedFast, swAlley);
+						auton.Rotate(-90);
+						auton.Drive(SpeedSlow, swDistFinal);
+						ele.Middle();
+						ele.Push();
 
 				break;
 
 				case 2 :
 					//LSCL
 					SmartDashboard::PutString("Auton Info", "Robot on left, going for scale on left");
+						auton.Drive(SpeedFast, scDist);
+						auton.Rotate(-90);
+						auton.Drive(SpeedSlow, scApproachDist);
+						ele.Top();
+						ele.Push();
 
 				break;
 
 				case 3 :
 					//LSCR
 					SmartDashboard::PutString("Auton Info", "Robot on left, going for scale on right");
+						auton.Drive(SpeedFast, alleyDist);
+						auton.Rotate(-90);
+						auton.Drive(SpeedFast, swAlley);
+						auton.Rotate(90);
+						auton.Drive(SpeedSlow, scDistFinal);
+						ele.Top();
+						ele.Push();
 
 				break;
 
 				case 4 :
 					//RSL
 					SmartDashboard::PutString("Auton Info", "Robot on right, going for switch on left");
+					auton.Drive(SpeedFast, alleyDist);
+					auton.Rotate(90);
+					auton.Drive(SpeedFast, swAlley);
+					auton.Rotate(90);
+					auton.Drive(SpeedSlow, swDistFinal);
+					ele.Middle();
+					ele.Push();
 
 				break;
 
 				case 5 :
 					//RSR
 					SmartDashboard::PutString("Auton Info", "Robot on right, going for switch on right");
+					auton.Drive(SpeedFast, swDist);
+					auton.Rotate(90);
+					auton.Drive(SpeedSlow, swApproachDist);
+					ele.Middle();
+					ele.Push();
 
 				break;
 
 				case 6 :
 					//RSCL
 					SmartDashboard::PutString("Auton Info", "Robot on right, going for scale on left");
+					auton.Drive(SpeedFast, alleyDist);
+					auton.Rotate(90);
+					auton.Drive(SpeedFast, swAlley);
+					auton.Rotate(-90);
+					auton.Drive(SpeedSlow, scDistFinal);
+					ele.Top();
+					ele.Push();
 
 				break;
 
 				case 7 :
 					//RSCR
 					SmartDashboard::PutString("Auton Info", "Robot on right, going for scale on right");
+					auton.Drive(SpeedFast, scDist);
+					auton.Rotate(90);
+					auton.Drive(SpeedSlow, scApproachDist);
+					ele.Top();
+					ele.Push();
 
 				break;
 
 				default :
 					//Just Go FWD
 					SmartDashboard::PutString("Auton Info", "No Auton, Just going fwd and stoping");
-
+						auton.Drive(SpeedFast, 30);
 				break;
-
-
 
 				}
 
