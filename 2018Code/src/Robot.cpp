@@ -28,7 +28,7 @@ class Robot : public frc::SampleRobot {
 public:
 	Robot():
 
-	drive(3, 4, 5, 7, 6, 8, 0, 1), joy(0), joy2(1), comp(8), auton(&drive), shift(joy2.GetRawButton(1)), pickup(joy.GetRawButton(6)), eject(joy.GetRawButton(5)), bottom(joy.GetRawButton(1)), middle(joy.GetRawButton(2)), top(joy.GetRawButton(4)), pick(8, 3, 4), ele(5, 8, 3, 4, 0, 1 , 2), m1(1), m2(2), pdp(0)
+	drive(3, 4, 5, 7, 6, 8, 0, 1), joy(0), joy2(1), comp(8), auton(&drive, this), shift(joy2.GetRawButton(1)), pickup(joy.GetRawButton(6)), eject(joy.GetRawButton(5)), bottom(joy.GetRawButton(1)), middle(joy.GetRawButton(2)), top(joy.GetRawButton(4)), pick(8, 3, 4), ele(5, 8, 3, 4, 0, 1 , 2), m1(1), m2(2), pdp(0)
 
 	{
 
@@ -180,7 +180,7 @@ public:
 					SmartDashboard::PutString("Auton Info", "Robot on left, going for scale on right");
 						auton.Drive(SpeedFast, alleyDist);
 						auton.Rotate(-90);
-						auton.Drive(SpeedFast, swAlley);
+						auton.Drive(SpeedFast, scAlley);
 						auton.Rotate(90);
 						auton.Drive(SpeedSlow, scDistFinal);
 						ele.Top();
@@ -217,7 +217,7 @@ public:
 					SmartDashboard::PutString("Auton Info", "Robot on right, going for scale on left");
 					auton.Drive(SpeedFast, alleyDist);
 					auton.Rotate(90);
-					auton.Drive(SpeedFast, swAlley);
+					auton.Drive(SpeedFast, scAlley);
 					auton.Rotate(-90);
 					auton.Drive(SpeedSlow, scDistFinal);
 					ele.Top();
