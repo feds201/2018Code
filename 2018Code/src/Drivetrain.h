@@ -41,8 +41,6 @@ private:
 		WPI_TalonSRX *Left2;
 		WPI_TalonSRX *Right1;
 		WPI_TalonSRX *Right2;
-		TalonSRX *talon;
-
 
 		uint8_t L2ID;
 		uint8_t R2ID;

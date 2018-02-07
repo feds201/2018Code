@@ -15,20 +15,34 @@ class Robot : public frc::SampleRobot {
 	Joystick joy, joy2;
 	Compressor comp;
 	Auton auton;
-	Edge shift, pickup, eject;
+	Edge shift, pickup, eject, ejectHi;
 	Edge bottom, middle, top;
+	Edge clamp;
 	Pickup pick;
 	Elevator ele;
-	WPI_TalonSRX m1;
-	WPI_TalonSRX m2;
+	//WPI_TalonSRX m1;
+	//WPI_TalonSRX m2;
 	frc::SendableChooser<std::string> chooser;
 	frc::SendableChooser<std::string> lrchooser;
-	PowerDistributionPanel pdp;
 
 public:
 	Robot():
 
-	drive(3, 4, 5, 7, 6, 8, 0, 1), joy(0), joy2(1), comp(8), auton(&drive, this), shift(joy2.GetRawButton(1)), pickup(joy.GetRawButton(6)), eject(joy.GetRawButton(5)), bottom(joy.GetRawButton(1)), middle(joy.GetRawButton(2)), top(joy.GetRawButton(4)), pick(8, 3, 4), ele(5, 8, 3, 4, 0, 1 , 2), m1(1), m2(2), pdp(0)
+	drive(1, 2, 4, 3, 0, 8, 1, 2),
+	joy(0),
+	joy2(1),
+	comp(8),
+	auton(&drive),
+	shift(joy.GetRawButton(1)),
+	pickup(joy2.GetRawButton(5)),
+	eject(joy2.GetRawButton(1)),
+	ejectHi(joy2.GetRawButton(4)),
+	bottom(joy2.GetRawButton(1)),
+	middle(joy2.GetRawButton(2)),
+	top(joy2.GetRawButton(4)),
+	clamp(joy2.GetRawButton(6)),
+	pick(0, 7, 8, 3, 4, 5, 6),
+	ele(5, 8, 6, 7, 3, 4, 5, 0, 1 , 2)
 
 	{
 
@@ -62,15 +76,17 @@ public:
 
 	void Autonomous() {
 
-		double swDist = 152;
-		double alleyDist = 212.5;
-		double scDist = 307.65;
-		double swAlley = 30;
-		double scAlley = 30;
-		double swDistFinal = 30;
-		double scDistFinal = 30;
-		double swApproachDist = 30;
-		double scApproachDist = 30;
+
+
+		double swDist = 154;
+		double alleyDist = 222;
+		double scDist = 310;
+		double swAlley = 174.5;
+		double scAlley = 188.2;
+		double swDistFinal = 25.75;
+		double scDistFinal = 50;
+		double swApproachDist = 25;
+		double scApproachDist = 11.4;
 		double SpeedFast = -.5;
 		double SpeedSlow = -.3;
 
@@ -147,7 +163,7 @@ public:
 						auton.Rotate(-90);
 						auton.Drive(SpeedSlow, swApproachDist);
 						ele.Middle();
-						ele.Push();
+						ele.PushLo();
 
 				break;
 
@@ -160,7 +176,7 @@ public:
 						auton.Rotate(-90);
 						auton.Drive(SpeedSlow, swDistFinal);
 						ele.Middle();
-						ele.Push();
+						ele.PushLo();
 
 				break;
 
@@ -171,7 +187,7 @@ public:
 						auton.Rotate(-90);
 						auton.Drive(SpeedSlow, scApproachDist);
 						ele.Top();
-						ele.Push();
+						ele.PushLo();
 
 				break;
 
@@ -184,7 +200,7 @@ public:
 						auton.Rotate(90);
 						auton.Drive(SpeedSlow, scDistFinal);
 						ele.Top();
-						ele.Push();
+						ele.PushLo();
 
 				break;
 
@@ -197,7 +213,7 @@ public:
 					auton.Rotate(90);
 					auton.Drive(SpeedSlow, swDistFinal);
 					ele.Middle();
-					ele.Push();
+					ele.PushLo();
 
 				break;
 
@@ -208,7 +224,7 @@ public:
 					auton.Rotate(90);
 					auton.Drive(SpeedSlow, swApproachDist);
 					ele.Middle();
-					ele.Push();
+					ele.PushLo();
 
 				break;
 
@@ -221,7 +237,7 @@ public:
 					auton.Rotate(-90);
 					auton.Drive(SpeedSlow, scDistFinal);
 					ele.Top();
-					ele.Push();
+					ele.PushLo();
 
 				break;
 
@@ -232,7 +248,7 @@ public:
 					auton.Rotate(90);
 					auton.Drive(SpeedSlow, scApproachDist);
 					ele.Top();
-					ele.Push();
+					ele.PushLo();
 
 				break;
 
@@ -309,43 +325,54 @@ public:
 
 		while (IsOperatorControl() && IsEnabled()) {
 
-			pickup.update(joy.GetRawButton(6));
-			eject.update(joy.GetRawButton(5));
-			bottom.update(joy.GetRawButton(1));
-			middle.update(joy.GetRawButton(2));
-			top.update(joy.GetRawButton(4));
+			pickup.update(joy2.GetRawButton(6));
+			eject.update(joy2.GetRawButton(1));
+			ejectHi.update(joy2.GetRawButton(4));
+			clamp.update(joy2.GetRawButton(5));
+			//bottom.update(joy2.GetRawButton(1));
+			//middle.update(joy2.GetRawButton(2));
+			//top.update(joy2.GetRawButton(4));
 
-			shift.update(joy2.GetRawButton(1));
+			shift.update(joy.GetRawButton(1));
 
 
 			if(pickup.isPressed())
 				pick.Toggle();
 
 			if(eject.isPressed())
-				ele.Push();
+				//ele.PushLo();
 
-			if(bottom.isPressed())
-				ele.Bottom();
+			if(ejectHi.isPressed())
+				//ele.PushHi();
 
-			if(middle.isPressed())
-				ele.Middle();
+			if(clamp.isPressed()){
+				pick.Grab();
+				std::cout << "Clamping" << std::endl;
+			}
+			//if(bottom.isPressed())
+				//ele.Bottom();
 
-			if(top.isPressed())
-				ele.Top();
+			//if(middle.isPressed())
+				//ele.Middle();
+
+			//if(top.isPressed())
+				//ele.Top();
 
 			if(shift.isPressed())
 				drive.Shift();
 
-			ele.Move(joy.GetRawAxis(2)-joy.GetRawAxis(3));
+			pick.WheelSpeed(joy2.GetRawAxis(4)); //:(
+
+			//ele.Move(joy2.GetRawAxis(1));
 
 			drive.Drive(deadzone(joy.GetRawAxis(1)), deadzone(joy.GetRawAxis(4)), true);
 
-			ele.Refresh();
+			//ele.Refresh();
 
 			SmartDashboard::PutNumber("Left Encoder Vel", drive.GetEncVel()[0]);
 			SmartDashboard::PutNumber("Right Encoder Vel", drive.GetEncVel()[1]);
-			SmartDashboard::PutNumber("Total Amps", pdp.GetTotalCurrent());
-			SmartDashboard::PutNumber("Total Power", pdp.GetTotalPower());
+			//SmartDashboard::PutNumber("Total Amps", pdp.GetTotalCurrent());
+			//SmartDashboard::PutNumber("Total Power", pdp.GetTotalPower());
 
 			frc::Wait(0.005);
 		}

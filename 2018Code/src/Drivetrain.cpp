@@ -1,14 +1,13 @@
 #include <Drivetrain.h>
 #include"WPILib.h"
 #include"ctre/Phoenix.h"
+#include<iostream>
 
 Drivetrain::Drivetrain(uint8_t L1, uint8_t L2, uint8_t R1, uint8_t R2, uint8_t gyro, int PCM, int shifterFWD, int shifterREV){
 
 	list = new struct driveList;
 
-	list->talon = new TalonSRX(gyro);
-
-	list->gyro = new PigeonIMU(list->talon);
+	list->gyro = new PigeonIMU(gyro);
 
 	list->gyro->SetFusedHeading(0, 10);
 
@@ -57,6 +56,7 @@ Drivetrain::Drivetrain(uint8_t L1, uint8_t L2, uint8_t R1, uint8_t R2, uint8_t g
 
 	list->shifter->Set(frc::DoubleSolenoid::Value::kForward);
 
+	std::cout << "Drivetrain Done" << std::endl;
 
 }
 

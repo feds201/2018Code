@@ -5,15 +5,16 @@
  *      Author: feds201
  */
 #include"Auton.h"
+#include<iostream>
 
-Auton::Auton(Drivetrain * drive, SampleRobot* robot){
 
-	list->robot = robot;
+Auton::Auton(Drivetrain * drive){
 
 	list = new struct AutonList;
 
 	list->drive = drive;
 
+	std::cout << "Auton Init" << std::endl;
 
 }
 
@@ -26,7 +27,7 @@ dist *= list->counterPerIn;
 list->drive->SetEncPos(0, 0);
 list->drive->setGyroAngle(0);
 
-while((abs(list->drive->GetEncPos()[0])+abs(list->drive->GetEncPos()[1]))/2 < dist && list->robot->IsAutonomous() && list->robot->IsEnabled()){
+while((abs(list->drive->GetEncPos()[0])+abs(list->drive->GetEncPos()[1]))/2 < dist){
 	list->drive->Drive(speed, 0, true);
 }
 	list->drive->Drive(0, 0, true);
@@ -40,13 +41,13 @@ void Auton::Rotate(double angle){
 
 	if(angle < 0){
 
-		while(list->drive->getGyroAngle() > angle && list->robot->IsAutonomous() && list->robot->IsEnabled()){
+		while(list->drive->getGyroAngle() > angle){
 			list->drive->Drive(0, 0.3, false);
 		}
 
 	}else{
 
-		while(list->drive->getGyroAngle() < angle && list->robot->IsAutonomous() && list->robot->IsEnabled()){
+		while(list->drive->getGyroAngle() < angle){
 			list->drive->Drive(0, -0.3, false);
 		}
 
@@ -70,7 +71,7 @@ list->Rc = radius;
 
 list->Wc = list->Vc/list->Rc;
 
-while(list->drive->getGyroAngle() < turnAngle && list->robot->IsAutonomous() && list->robot->IsEnabled()){
+while(list->drive->getGyroAngle() < turnAngle){
 
 	list->t = list->timer.Get();
 

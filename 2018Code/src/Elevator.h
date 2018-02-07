@@ -13,12 +13,13 @@
 class Elevator{
 
 public:
-	Elevator(uint8_t motorID, int PCM, int fwdsolenoid, int revsolenoid, int tlimit, int mlimit, int blimit);
+	Elevator(uint8_t motorID, int PCM, int fwdsolenoid, int revsolenoid, int presToggleHi, int presToggleHiOff, int presToggleLo, int tlimit, int mlimit, int blimit);
 	void Move(double speed);
 	void Top();
 	void Bottom();
 	void Middle();
-	void Push();
+	void PushHi();
+	void PushLo();
 	void Refresh();
 
 private:
@@ -27,6 +28,8 @@ private:
 
 		WPI_TalonSRX *motor;
 		DoubleSolenoid *solenoid;
+		DoubleSolenoid *hiPresToggle;
+		Solenoid *loPresToggle;
 		DigitalInput *toplimit;
 		DigitalInput *middlelimit;
 		DigitalInput *bottomlimit;

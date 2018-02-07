@@ -18,7 +18,7 @@ class Auton{
 
 public:
 
-Auton(Drivetrain* drive, SampleRobot* robot);
+Auton(Drivetrain* drive);
 void Drive(double speed, double dist);
 void Rotate(double angle);
 void Arc(double speed, double turnAngle, double radius);
@@ -34,17 +34,16 @@ private:
 
 		Timer timer;
 
-		frc::SampleRobot *robot;
 
 		bool hasTurned = false;
 		bool offSet = 0;
 
-		double gearRatioHi;
-		double gearRatioLo;
-		double wheelR;
-		double encCountsPerRev;
+		double gearRatioHi = (40/34);
+		double gearRatioLo = (60/14);
+		double wheelR = 3;
+		double encCountsPerRev = 4096;
 		double pi = 3.14159;
-		double Track;
+		double Track = 28;
 
 		double ViSetPt;
 		double VoSetPt;
