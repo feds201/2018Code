@@ -11,14 +11,27 @@
 
 Elevator::Elevator(uint8_t motorID, int PCM, int fwdsolenoid, int revsolenoid, int presToggleHi, int presToggleHiOff, int presToggleLo,  int tlimit, int blimit){
 
-	//Test Again
+	//List points to a new copy of Elist
 	list = new struct EList;
+
+	//New SRX object with motorID
 	list->motor = new WPI_TalonSRX(motorID);
+
+	//New DoubleSolenoid Object PCM- ID of PCM, fwd- Port on PCM that solenoid is hooked up to, rev- Second port on PCM
 	list->solenoid = new DoubleSolenoid(PCM, fwdsolenoid, revsolenoid);
+
+	//ToggleHi- port activated on PCM when High Pressure is wanted, ToggleHiOff is opposite
 	list->hiPresToggle = new DoubleSolenoid(PCM, presToggleHi, presToggleHiOff);
+
+	//New Solenoid Object, Only one port (ToggleLo) because it is a single solenoid
 	list->loPresToggle = new Solenoid(PCM, presToggleLo);
+
+	//New DI Object, tlimit- Port on DIO (reads port to see if switch is true or false)
 	list->toplimit = new DigitalInput(tlimit);
+
+	//blimit- port on DIO
 	list->bottomlimit = new DigitalInput(blimit);
+
 
 	list->motor->ConfigSelectedFeedbackSensor(FeedbackDevice::CTRE_MagEncoder_Absolute, 0, 10);
 
