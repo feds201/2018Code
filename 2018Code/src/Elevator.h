@@ -26,13 +26,24 @@ private:
 
 	struct EList{
 
+		//Motor that controls elevator
 		WPI_TalonSRX *motor;
+
+		//Controls piston that pushes cube
 		DoubleSolenoid *solenoid;
+
+		//Toggles flow of high pressure for cube ejector
 		DoubleSolenoid *hiPresToggle;
+
+		//Toggles flow of low pressure for cube ejector
 		Solenoid *loPresToggle;
+
+		//Switch on top indicating if elevator is touching it
 		DigitalInput *toplimit;
 		DigitalInput *middlelimit;
 		DigitalInput *bottomlimit;
+
+
 		bool top = false;
 		bool middle = false;
 		bool bottom = false;
@@ -41,6 +52,7 @@ private:
 
 	};
 
+	//Declares pointer list to struct Elist
 	struct EList* list;
 
 };

@@ -28,13 +28,11 @@ Elevator::Elevator(uint8_t motorID, int PCM, int fwdsolenoid, int revsolenoid, i
 
 	//New DI Object, tlimit- Port on DIO (reads port to see if switch is true or false)
 	list->toplimit = new DigitalInput(tlimit);
-
-	//blimit- port on DIO
 	list->bottomlimit = new DigitalInput(blimit);
-
 
 	list->motor->ConfigSelectedFeedbackSensor(FeedbackDevice::CTRE_MagEncoder_Absolute, 0, 10);
 
+	//Sets hiPres DoubleSolenoid Object to Enum type kReverse. Makes one side of solenoid on.
 	list->hiPresToggle->Set(frc::DoubleSolenoid::Value::kReverse);
 	list->solenoid->Set(frc::DoubleSolenoid::Value::kReverse);
 
@@ -42,33 +40,38 @@ Elevator::Elevator(uint8_t motorID, int PCM, int fwdsolenoid, int revsolenoid, i
 
 }
 
+//Moves elevator, still need to figure out what negative and positive speeds mean
 void Elevator::Move(double speed){
 
+	//Ramping
 	if(speed != 0 && speed < 0 && list->motor->GetSelectedSensorPosition(0) < 2000){
 		speed = -0.2;
 	}else if(speed != 0 && speed > 0 && list->motor->GetSelectedSensorPosition(0) > 10000){
 		speed = 0.2;
 	}
 
-
+	//If speed < 0 and elevator is at bottom, set the motor to the speed
 	if(speed < 0 && list->bottomlimit->Get()){
 		list->motor->Set(speed);
-	}else if(speed > 0 && list->toplimit->Get()){
+	}else if(speed > 0 && list->toplimit->Get()){ //Else the speed > 0 and the elevator is at the top
 		list->motor->Set(speed);
 	}else{
-		list->motor->Set(0);
+		list->motor->Set(0); //Else motor is 0
 	}
 
 }
 
-
+//Eject cube to high pressure
 void Elevator::PushHi(){
 
+	//If cube pushing solenoid is in kForward, switch low pressure solenoid to true
 	if(list->solenoid->Get() == frc::DoubleSolenoid::Value::kForward){
 		list->hiPresToggle->Set(frc::DoubleSolenoid::Value::kReverse);
 		list->loPresToggle->Set(true);
 		list->solenoid->Set(frc::DoubleSolenoid::Value::kReverse);
-	}else{
+	}
+	//If not, set high pressure solenoid to true
+	else{
 		list->hiPresToggle->Set(frc::DoubleSolenoid::Value::kForward);
 		list->loPresToggle->Set(false);
 		list->solenoid->Set(frc::DoubleSolenoid::Value::kForward);
@@ -77,6 +80,7 @@ void Elevator::PushHi(){
 
 }
 
+//Not using
 void Elevator::PushLo(){
 
 	if(list->solenoid->Get() == frc::DoubleSolenoid::Value::kForward){
