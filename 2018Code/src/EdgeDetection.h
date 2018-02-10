@@ -8,6 +8,7 @@
 #ifndef SRC_EDGEDETECTION_H_
 #define SRC_EDGEDETECTION_H_
 
+//Class to check if a button is being pressed, not held down
 class Edge {
 public:
 	Edge(bool inital=false);
@@ -17,7 +18,11 @@ public:
 	bool getState();
 
 private:
+
+	//If the button was pressed last time
 	bool lastTime;
+
+	//If the button was pressed this time
 	bool thisTime;
 };
 
