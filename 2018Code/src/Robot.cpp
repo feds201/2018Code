@@ -16,7 +16,7 @@ class Robot : public frc::SampleRobot {
 	Compressor comp;
 	Auton auton;
 	Edge shift, pickup, eject, ejectHi;
-	Edge bottom, middle, top;
+	//Edge bottom, middle, top;
 	Edge clamp;
 	Pickup pick;
 	Elevator ele;
@@ -37,12 +37,12 @@ public:
 	pickup(joy2.GetRawButton(5)),
 	eject(joy2.GetRawButton(1)),
 	ejectHi(joy2.GetRawButton(4)),
-	bottom(joy2.GetRawButton(1)),
-	middle(joy2.GetRawButton(2)),
-	top(joy2.GetRawButton(4)),
+	//bottom(joy2.GetRawButton(1)),
+	//middle(joy2.GetRawButton(2)),
+	//top(joy2.GetRawButton(4)),
 	clamp(joy2.GetRawButton(6)),
 	pick(0, 7, 8, 3, 4, 5, 6),
-	ele(5, 8, 6, 7, 3, 4, 5, 0, 1 , 2)
+	ele(5, 8, 6, 7, 3, 4, 5, 0, 1)
 
 	{
 
@@ -340,10 +340,10 @@ public:
 				pick.Toggle();
 
 			if(eject.isPressed())
-				//ele.PushLo();
+				ele.PushLo();
 
 			if(ejectHi.isPressed())
-				//ele.PushHi();
+				ele.PushHi();
 
 			if(clamp.isPressed()){
 				pick.Grab();

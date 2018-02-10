@@ -13,7 +13,7 @@
 class Elevator{
 
 public:
-	Elevator(uint8_t motorID, int PCM, int fwdsolenoid, int revsolenoid, int presToggleHi, int presToggleHiOff, int presToggleLo, int tlimit, int mlimit, int blimit);
+	Elevator(uint8_t motorID, int PCM, int fwdsolenoid, int revsolenoid, int presToggleHi, int presToggleHiOff, int presToggleLo, int tlimit, int blimit);
 	void Move(double speed);
 	void Top();
 	void Bottom();
