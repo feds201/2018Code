@@ -162,7 +162,6 @@ public:
 						auton.Drive(SpeedFast, swDist);
 						auton.Rotate(-90);
 						auton.Drive(SpeedSlow, swApproachDist);
-						ele.Middle();
 						ele.PushLo();
 
 				break;
@@ -175,7 +174,6 @@ public:
 						auton.Drive(SpeedFast, swAlley);
 						auton.Rotate(-90);
 						auton.Drive(SpeedSlow, swDistFinal);
-						ele.Middle();
 						ele.PushLo();
 
 				break;
@@ -186,7 +184,6 @@ public:
 						auton.Drive(SpeedFast, scDist);
 						auton.Rotate(-90);
 						auton.Drive(SpeedSlow, scApproachDist);
-						ele.Top();
 						ele.PushLo();
 
 				break;
@@ -199,7 +196,6 @@ public:
 						auton.Drive(SpeedFast, scAlley);
 						auton.Rotate(90);
 						auton.Drive(SpeedSlow, scDistFinal);
-						ele.Top();
 						ele.PushLo();
 
 				break;
@@ -212,7 +208,6 @@ public:
 					auton.Drive(SpeedFast, swAlley);
 					auton.Rotate(90);
 					auton.Drive(SpeedSlow, swDistFinal);
-					ele.Middle();
 					ele.PushLo();
 
 				break;
@@ -223,7 +218,6 @@ public:
 					auton.Drive(SpeedFast, swDist);
 					auton.Rotate(90);
 					auton.Drive(SpeedSlow, swApproachDist);
-					ele.Middle();
 					ele.PushLo();
 
 				break;
@@ -236,7 +230,6 @@ public:
 					auton.Drive(SpeedFast, scAlley);
 					auton.Rotate(-90);
 					auton.Drive(SpeedSlow, scDistFinal);
-					ele.Top();
 					ele.PushLo();
 
 				break;
@@ -247,7 +240,6 @@ public:
 					auton.Drive(SpeedFast, scDist);
 					auton.Rotate(90);
 					auton.Drive(SpeedSlow, scApproachDist);
-					ele.Top();
 					ele.PushLo();
 
 				break;
@@ -273,7 +265,7 @@ public:
 		auton.Drive(-0.3, 18);
 		m1.Set(1);
 		m2.Set(1);
-		frc::Wait(4);
+		frc::Wait(4);s
 		m1.Set(0);
 		m2.Set(0);
 		drive.setGyroAngle(0);
