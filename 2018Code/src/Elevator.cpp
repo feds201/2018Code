@@ -30,6 +30,7 @@ Elevator::Elevator(uint8_t motorID, int PCM, int fwdsolenoid, int revsolenoid, i
 	list->toplimit = new DigitalInput(tlimit);
 	list->bottomlimit = new DigitalInput(blimit);
 
+	// vv
 	list->motor->ConfigSelectedFeedbackSensor(FeedbackDevice::CTRE_MagEncoder_Absolute, 0, 10);
 
 	//Sets hiPres DoubleSolenoid Object to Enum type kReverse. Makes one side of solenoid on.
@@ -43,7 +44,7 @@ Elevator::Elevator(uint8_t motorID, int PCM, int fwdsolenoid, int revsolenoid, i
 //Moves elevator, still need to figure out what negative and positive speeds mean
 void Elevator::Move(double speed){
 
-	//Ramping
+	//Ramping vv
 	if(speed != 0 && speed < 0 && list->motor->GetSelectedSensorPosition(0) < 2000){
 		speed = -0.2;
 	}else if(speed != 0 && speed > 0 && list->motor->GetSelectedSensorPosition(0) > 10000){
@@ -61,16 +62,18 @@ void Elevator::Move(double speed){
 
 }
 
+//Still questions on this vv
+
 //Eject cube to high pressure
 void Elevator::PushHi(){
 
-	//If cube pushing solenoid is in kForward, switch low pressure solenoid to true
+	//If cube pushing solenoid is in kForward, switch low pressure solenoid to true, and retract cube pusher
 	if(list->solenoid->Get() == frc::DoubleSolenoid::Value::kForward){
 		list->hiPresToggle->Set(frc::DoubleSolenoid::Value::kReverse);
 		list->loPresToggle->Set(true);
 		list->solenoid->Set(frc::DoubleSolenoid::Value::kReverse);
 	}
-	//If not, set high pressure solenoid to true
+	//If not, set high pressure solenoid to true, and push piston forward
 	else{
 		list->hiPresToggle->Set(frc::DoubleSolenoid::Value::kForward);
 		list->loPresToggle->Set(false);
@@ -80,14 +83,17 @@ void Elevator::PushHi(){
 
 }
 
-//Not using
+//Eject cube to low pressure
 void Elevator::PushLo(){
 
+	//If cube pushing solenoid is in kForward, switch to low pressure, and retract cube pusher
 	if(list->solenoid->Get() == frc::DoubleSolenoid::Value::kForward){
 		list->hiPresToggle->Set(frc::DoubleSolenoid::Value::kReverse);
 		list->loPresToggle->Set(true);
 		list->solenoid->Set(frc::DoubleSolenoid::Value::kReverse);
-	}else{
+	}
+	//If not, set to low pressure, push piston forward
+	else{
 		list->hiPresToggle->Set(frc::DoubleSolenoid::Value::kReverse);
 		list->loPresToggle->Set(true);
 		list->solenoid->Set(frc::DoubleSolenoid::Value::kForward);
