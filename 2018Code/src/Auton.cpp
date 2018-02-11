@@ -8,6 +8,7 @@
 #include<iostream>
 
 
+
 Auton::Auton(Drivetrain * drive){
 
 	list = new struct AutonList;
@@ -23,7 +24,8 @@ void Auton::Drive(double speed, double dist){
 if(list->hasTurned)
 	dist += list->offSet;
 
-dist *= list->counterPerIn;
+dist *= list->encCountsPerRev(list->gearRatioLo*(1/(2*list->pi*list->wheelR)));
+
 list->drive->SetEncPos(0, 0);
 list->drive->setGyroAngle(0);
 

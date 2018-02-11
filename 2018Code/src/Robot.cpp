@@ -8,6 +8,7 @@
 #include "Pickup.h"
 #include <SmartDashboard/SendableChooser.h>
 #include <iostream>
+#include"CameraServer.h"
 
 class Robot : public frc::SampleRobot {
 
@@ -16,14 +17,16 @@ class Robot : public frc::SampleRobot {
 	Compressor comp;
 	Auton auton;
 	Edge shift, pickup, eject, ejectHi;
-	//Edge bottom, middle, top;
 	Edge clamp;
 	Pickup pick;
 	Elevator ele;
-	//WPI_TalonSRX m1;
-	//WPI_TalonSRX m2;
 	frc::SendableChooser<std::string> chooser;
 	frc::SendableChooser<std::string> lrchooser;
+	DoubleSolenoid climber;
+	Edge climb;
+	cs::UsbCamera eleCam;
+	cs::UsbCamera climbCam;
+
 
 public:
 	Robot():
@@ -37,12 +40,12 @@ public:
 	pickup(joy2.GetRawButton(5)),
 	eject(joy2.GetRawButton(1)),
 	ejectHi(joy2.GetRawButton(4)),
-	//bottom(joy2.GetRawButton(1)),
-	//middle(joy2.GetRawButton(2)),
-	//top(joy2.GetRawButton(4)),
 	clamp(joy2.GetRawButton(6)),
 	pick(0, 7, 8, 3, 4, 5, 6),
-	ele(5, 8, 6, 7, 3, 4, 5, 0, 1)
+	ele(5, 8, 6, 7, 3, 4, 5, 0, 1),
+	climber(0, 1, 2),
+	eleCam(),
+	climbCam()
 
 	{
 
@@ -67,10 +70,18 @@ public:
 		lrchooser.AddDefault("Left", l);
 		lrchooser.AddObject("Right", r);
 
-
 		SmartDashboard::PutData("Auto Modes", &chooser);
 		SmartDashboard::PutData("Select Side", &lrchooser);
 		SmartDashboard::PutString("Game Data", frc::DriverStation::GetInstance().GetGameSpecificMessage());
+
+		eleCam = CameraServer::GetInstance()->StartAutomaticCapture();
+		climbCam = CameraServer::GetInstance()->StartAutomaticCapture();
+		eleCam.SetExposureAuto();
+		eleCam.SetResolution(480, 360);
+		eleCam.SetFPS(15);
+		climbCam.SetExposureAuto();
+		climbCam.SetResolution(480, 360);
+		climbCam.SetFPS(0);
 
 	}
 
@@ -317,6 +328,13 @@ public:
 
 		while (IsOperatorControl() && IsEnabled()) {
 
+			if(joy.GetRawButton(8)){
+				eleCam.SetFPS(0);
+				climbCam.SetFPS(15);
+			}else if(joy.GetRawButton(7)){
+				eleCam.SetFPS(15);
+				climbCam.SetFPS(0);
+			}
 			pickup.update(joy2.GetRawButton(6));
 			eject.update(joy2.GetRawButton(1));
 			ejectHi.update(joy2.GetRawButton(4));
@@ -353,13 +371,18 @@ public:
 			if(shift.isPressed())
 				drive.Shift();
 
-			pick.WheelSpeed(joy2.GetRawAxis(4)); //:(
+			pick.WheelSpeed(deadzone(joy2.GetRawAxis(4))); //:(
 
 			//ele.Move(joy2.GetRawAxis(1));
 
 			drive.Drive(deadzone(joy.GetRawAxis(1)), deadzone(joy.GetRawAxis(4)), true);
 
 			//ele.Refresh();
+
+			if(joy2.GetRawButton(7))
+				climber.Set(frc::DoubleSolenoid::Value::kForward);
+			else if(joy2.GetRawButton(8))
+				climber.Set(frc::DoubleSolenoid::Value::kReverse);
 
 			SmartDashboard::PutNumber("Left Encoder Vel", drive.GetEncVel()[0]);
 			SmartDashboard::PutNumber("Right Encoder Vel", drive.GetEncVel()[1]);
