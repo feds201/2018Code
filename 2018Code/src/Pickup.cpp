@@ -10,17 +10,30 @@
 #include"ctre/Phoenix.h"
 #include<iostream>
 
+//Pick
+
+//solenoids control air
+//PCM controls soloenoids
+
 Pickup::Pickup(uint8_t PCM, uint8_t m1id, uint8_t m2id, int up, int down, int in, int out){
 
+	//Create DoubleSolenoid object, controls arm going up and down. PCM- canID for pneumatic control module, up- ports on the PCM that make arm go up, down is opposite
 	solenoid = new DoubleSolenoid(PCM, up, down);
+
+	//Arms pinching DoubleSolenoid, parameters same as above
 	sqSol = new DoubleSolenoid(PCM, in , out);
 
+	//Makes new motors, m1id & m2id are canIDs of CANTALONS
 	m1 = new WPI_TalonSRX(m1id);
 	m2 = new WPI_TalonSRX(m2id);
 
+	//kForward makes arm go up (generally just makes the object do ON)
 	solenoid->Set(frc::DoubleSolenoid::Value::kForward);
+
+	//kForward makes arms pinch
 	sqSol->Set(frc::DoubleSolenoid::Value::kForward);
 
+	//Prints to console
 	std::cout << "Pickup Init" << std::endl;
 
 }

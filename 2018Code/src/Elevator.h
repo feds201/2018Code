@@ -43,7 +43,7 @@ private:
 		DigitalInput *middlelimit;
 		DigitalInput *bottomlimit;
 
-		//vv
+		//Not using anymore
 		bool top = false;
 		bool middle = false;
 		bool bottom = false;

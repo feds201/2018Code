@@ -23,8 +23,13 @@ class Pickup{
 
 	private:
 
+	//Solenoid that controls pickup arm going up and down
 	DoubleSolenoid *solenoid;
+
+	//Solenoid that controls arm pinching
 	DoubleSolenoid *sqSol;
+
+	//Motors for wheels on arms
 	WPI_TalonSRX *m1;
 	WPI_TalonSRX *m2;
 
