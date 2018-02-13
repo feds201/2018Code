@@ -78,10 +78,10 @@ public:
 		climbCam = CameraServer::GetInstance()->StartAutomaticCapture();
 		eleCam.SetExposureAuto();
 		eleCam.SetResolution(480, 360);
-		eleCam.SetFPS(15);
+		eleCam.SetFPS(0);
 		climbCam.SetExposureAuto();
 		climbCam.SetResolution(480, 360);
-		climbCam.SetFPS(0);
+		climbCam.SetFPS(15);
 
 	}
 
@@ -98,7 +98,7 @@ public:
 		double scDistFinal = 50;
 		double swApproachDist = 25;
 		double scApproachDist = 11.4;
-		double SpeedFast = -.5;
+		double SpeedFast = -.3;
 		double SpeedSlow = -.3;
 
 		std::string selected = chooser.GetSelected();
@@ -325,15 +325,16 @@ public:
 		comp.SetClosedLoopControl(true);
 		drive.SetEncPos(0, 0);
 		drive.setGyroAngle(0);
+		climber.Set(frc::DoubleSolenoid::Value::kReverse);
 
 		while (IsOperatorControl() && IsEnabled()) {
 
 			if(joy.GetRawButton(8)){
-				eleCam.SetFPS(0);
-				climbCam.SetFPS(15);
-			}else if(joy.GetRawButton(7)){
 				eleCam.SetFPS(15);
 				climbCam.SetFPS(0);
+			}else if(joy.GetRawButton(7)){
+				eleCam.SetFPS(0);
+				climbCam.SetFPS(15);
 			}
 			pickup.update(joy2.GetRawButton(6));
 			eject.update(joy2.GetRawButton(1));
@@ -373,9 +374,9 @@ public:
 
 			pick.WheelSpeed(deadzone(joy2.GetRawAxis(4))); //:(
 
-			//ele.Move(joy2.GetRawAxis(1));
+			ele.Move(deadzone(-joy2.GetRawAxis(1)));
 
-			drive.Drive(deadzone(joy.GetRawAxis(1)), deadzone(joy.GetRawAxis(4)), true);
+			drive.Drive(deadzone(joy.GetRawAxis(1)), deadzone(joy.GetRawAxis(4)), false);
 
 			//ele.Refresh();
 

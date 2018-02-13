@@ -30,12 +30,13 @@ Elevator::Elevator(uint8_t motorID, int PCM, int fwdsolenoid, int revsolenoid, i
 
 void Elevator::Move(double speed){
 
+	/*
 	if(speed != 0 && speed < 0 && list->motor->GetSelectedSensorPosition(0) < 2000){
 		speed = -0.2;
 	}else if(speed != 0 && speed > 0 && list->motor->GetSelectedSensorPosition(0) > 10000){
 		speed = 0.2;
 	}
-
+*/
 
 	if(speed < 0 && list->bottomlimit->Get()){
 		list->motor->Set(speed);

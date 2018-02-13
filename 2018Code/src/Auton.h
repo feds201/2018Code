@@ -39,7 +39,7 @@ private:
 		bool offSet = 0;
 
 		double gearRatioHi = (40/34);
-		double gearRatioLo = (60/14);
+		double gearRatioLo = (60/14)/0.74;
 		double wheelR = 3;
 		double encCountsPerRev = 4096;
 		double pi = 3.14159;

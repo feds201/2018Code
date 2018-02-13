@@ -13,6 +13,7 @@
 Pickup::Pickup(uint8_t PCM, uint8_t m1id, uint8_t m2id, int up, int down, int in, int out){
 
 	solenoid = new DoubleSolenoid(PCM, up, down);
+
 	sqSol = new DoubleSolenoid(PCM, in , out);
 
 	m1 = new WPI_TalonSRX(m1id);
