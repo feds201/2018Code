@@ -10,10 +10,10 @@
 #include"ctre/Phoenix.h"
 #include<iostream>
 
-//Pick
+//Class for controlling arms and everything associated
 
-//solenoids control air
-//PCM controls soloenoids
+//Solenoids control air
+//PCM controls solenoids
 
 Pickup::Pickup(uint8_t PCM, uint8_t m1id, uint8_t m2id, int up, int down, int in, int out){
 
