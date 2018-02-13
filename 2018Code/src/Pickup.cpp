@@ -33,30 +33,34 @@ Pickup::Pickup(uint8_t PCM, uint8_t m1id, uint8_t m2id, int up, int down, int in
 	//kForward makes arms pinch
 	sqSol->Set(frc::DoubleSolenoid::Value::kForward);
 
-	//Prints to console
+	//Prints to driver station
 	std::cout << "Pickup Init" << std::endl;
 
 }
 
+//Makes arms go up or down, reverse of what it already is
 void Pickup::Toggle(){
 
+	//If arm up, go down
 	if(solenoid->Get() == frc::DoubleSolenoid::Value::kForward)
 		solenoid->Set(frc::DoubleSolenoid::Value::kReverse);
-	else
+	else //(Arm is already down), Go up
 		solenoid->Set(frc::DoubleSolenoid::Value::kForward);
 
 }
 
+//Makes pinchers go in or out, reverse of what it already is
 void Pickup::Grab(){
 
+	//If pinchers forward, retract
 	if(sqSol->Get() == frc::DoubleSolenoid::Value::kForward)
 		sqSol->Set(frc::DoubleSolenoid::Value::kReverse);
-	else
+	else //(Pincher is reverse), Go forward
 		sqSol->Set(frc::DoubleSolenoid::Value::kForward);
 
 }
 
-
+//Sets speed of wheels on pinchers, might not need the parameter, only there for now because Andy doesn't know what the appropriate speed is yet
 void Pickup::WheelSpeed(double speed){
 
 	m1->Set(speed);

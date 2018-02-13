@@ -30,14 +30,14 @@ Elevator::Elevator(uint8_t motorID, int PCM, int fwdsolenoid, int revsolenoid, i
 	list->toplimit = new DigitalInput(tlimit);
 	list->bottomlimit = new DigitalInput(blimit);
 
-	// vv
+	//Main point is to tell motor what type of motor it has. FeedbackDevice- type of motor, pidIDX(0)- Don't know, timeout in ms(10)- Don't know
 	list->motor->ConfigSelectedFeedbackSensor(FeedbackDevice::CTRE_MagEncoder_Absolute, 0, 10);
 
 	//Sets hiPres DoubleSolenoid Object to Enum type kReverse. Makes one side of solenoid on.
 	list->hiPresToggle->Set(frc::DoubleSolenoid::Value::kReverse);
 	list->solenoid->Set(frc::DoubleSolenoid::Value::kReverse);
 
-	//Prints to console
+	//Prints to driver station
 	std::cout << "Ele Init" << std::endl;
 
 }
