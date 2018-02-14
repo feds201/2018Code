@@ -38,6 +38,7 @@ private:
 		bool bottom = false;
 		bool wastop = false;
 		bool wasbottom = false;
+		double pos = 0;
 
 	};
 

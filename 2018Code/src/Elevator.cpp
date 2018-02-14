@@ -26,6 +26,11 @@ Elevator::Elevator(uint8_t motorID, int PCM, int fwdsolenoid, int revsolenoid, i
 
 	std::cout << "Ele Init" << std::endl;
 
+	list->motor->Config_kP(0, 0, 10);
+
+
+	list->motor->SetSelectedSensorPosition(0, 0, 20);
+
 }
 
 void Elevator::Move(double speed){
@@ -37,15 +42,22 @@ void Elevator::Move(double speed){
 		speed = 0.2;
 	}
 */
+	if(speed == 0){
+
+		list->motor->Set(ControlMode::Position, list->pos);
+
+	}else{
+
+		list->pos = list->motor->GetSelectedSensorPosition(0);
 
 	if(speed < 0 && list->bottomlimit->Get()){
 		list->motor->Set(speed);
 	}else if(speed > 0 && list->toplimit->Get()){
-		list->motor->Set(speed);
+		list->motor->Set(ControlMode::PercentOutput, speed);
 	}else{
 		list->motor->Set(0);
 	}
-
+	}
 }
 
 

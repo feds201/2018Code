@@ -2,12 +2,15 @@
 #include"WPILib.h"
 #include"ctre/Phoenix.h"
 #include<iostream>
+#include"Math.h"
 
 Drivetrain::Drivetrain(uint8_t L1, uint8_t L2, uint8_t R1, uint8_t R2, uint8_t gyro, int PCM, int shifterFWD, int shifterREV){
 
 	list = new struct driveList;
 
 	list->gyro = new PigeonIMU(gyro);
+
+	list->accelValues = new int16_t[3];
 
 	list->gyro->SetFusedHeading(0, 10);
 
@@ -66,6 +69,13 @@ void Drivetrain::Drive(float fwd, float trn, bool autoHeading){
 	SmartDashboard::PutNumber("LEnc", GetEncPos()[0]);
 	SmartDashboard::PutNumber("REnc", GetEncPos()[1]);
 
+	list->gyro->GetBiasedAccelerometer(list->accelValues);
+
+	list->accelX = list->accelValues[0]/16384;
+	list->accelY = list->accelValues[1]/16384;
+	list->accelZ = list->accelValues[2]/16384;
+
+	fwd *= 1-pow((list->accelX/list->MAXAccel), 3);
 
 	if(trn != 0 && autoHeading)
 		list->gyro->SetFusedHeading(0, 10);

@@ -51,6 +51,12 @@ private:
 
 		PigeonIMU *gyro;
 
+		int16_t* accelValues;
+
+		double accelX, accelY, accelZ;
+
+		int MAXAccel;
+
 		double leftSet;
 		double rightSet;
 
