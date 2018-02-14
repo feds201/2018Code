@@ -11,13 +11,16 @@ Drivetrain::Drivetrain(uint8_t L1, uint8_t L2, uint8_t R1, uint8_t R2, uint8_t g
 
 	list->gyro->SetFusedHeading(0, 10);
 
+	//
 	list->prefs = Preferences::GetInstance();
 
+	//Initializes motors with CANIDs
 	list->Left1 = new WPI_TalonSRX(L1);
 	list->Left2 = new WPI_TalonSRX(L2);
 	list->Right1 = new WPI_TalonSRX(R1);
 	list->Right2 = new WPI_TalonSRX(R2);
 
+	//Assigns ID vars appropriate ID
 	list->L2ID = L2;
 	list->R2ID = R2;
 
@@ -37,6 +40,7 @@ Drivetrain::Drivetrain(uint8_t L1, uint8_t L2, uint8_t R1, uint8_t R2, uint8_t g
 	list->Left2->ConfigNominalOutputReverse(0, 10);
 	list->Right2->ConfigNominalOutputReverse(0, 10);
 
+	//Puts
 	list->prefs->PutDouble("P", list->P);
 	list->prefs->PutDouble("I", list->I);
 	list->prefs->PutDouble("D", list->D);
