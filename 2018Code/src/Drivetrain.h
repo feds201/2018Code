@@ -70,12 +70,14 @@ private:
 
 		//Note: On drivetrain kForward is low gear and kReverse is high gear
 
-		//FWD- port on PCM that shifts solenoid forward, REV is opposite
+		//FWD- port on PCM that shifts cylinders forward or reverse (doesn't matter), REV is opposite
 		int shifterFWD;
 		int shifterREV;
 
-		//
+		//Holds encoder positions in counts (ie 512 is 1/8 of a full rotation)
 		int EncPos[2];
+
+		//Holds encoder velocities
 		int EncVel[2];
 
 	};

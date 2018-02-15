@@ -7,11 +7,13 @@ Drivetrain::Drivetrain(uint8_t L1, uint8_t L2, uint8_t R1, uint8_t R2, uint8_t g
 
 	list = new struct driveList;
 
+	//Initialize gyro object with CANID
 	list->gyro = new PigeonIMU(gyro);
 
+	//Sets gyro to a angle of 0 with a 10 millisecond timeout (doesn't really matter)
 	list->gyro->SetFusedHeading(0, 10);
 
-	//
+	// vv
 	list->prefs = Preferences::GetInstance();
 
 	//Initializes motors with CANIDs
