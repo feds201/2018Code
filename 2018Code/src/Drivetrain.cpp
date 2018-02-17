@@ -22,32 +22,37 @@ Drivetrain::Drivetrain(uint8_t L1, uint8_t L2, uint8_t R1, uint8_t R2, uint8_t g
 	list->Right1 = new WPI_TalonSRX(R1);
 	list->Right2 = new WPI_TalonSRX(R2);
 
-	//Assigns ID vars appropriate ID
+	//Assigns vars to appropriate CANID
 	list->L2ID = L2;
 	list->R2ID = R2;
 
+	//Makes new DoubleSolenoid, PCM is CANID of pneumatic control module, shifterFWD and REV are ports on PCM
 	list->shifter = new DoubleSolenoid(PCM, shifterFWD, shifterREV);
 
+	//Assigns associated values to list struct
 	list->pcm = PCM;
 	list->shifterFWD = shifterFWD;
 	list->shifterREV = shifterREV;
 
+	//
 	list->Left1->Set(ControlMode::PercentOutput, 0);
 	list->Left2->Set(ControlMode::PercentOutput, 0);
 	list->Right1->Set(ControlMode::PercentOutput, 0);
 	list->Right2->Set(ControlMode::PercentOutput, 0);
 
+	//Second parameter is timeout in ms
 	list->Left2->ConfigNominalOutputForward(0, 10);
 	list->Right2->ConfigNominalOutputForward(0, 10);
 	list->Left2->ConfigNominalOutputReverse(0, 10);
 	list->Right2->ConfigNominalOutputReverse(0, 10);
 
-	//Puts
+	//Puts values on shuffleboard screen
 	list->prefs->PutDouble("P", list->P);
 	list->prefs->PutDouble("I", list->I);
 	list->prefs->PutDouble("D", list->D);
 	list->prefs->PutDouble("F", list->F);
 
+	//Left2 and Right2 are motors that have encoders, vv
 	list->Left2->ConfigSelectedFeedbackSensor(FeedbackDevice::CTRE_MagEncoder_Absolute, 0, 10);
 	list->Right2->ConfigSelectedFeedbackSensor(FeedbackDevice::CTRE_MagEncoder_Absolute, 0, 10);
 
@@ -60,6 +65,7 @@ Drivetrain::Drivetrain(uint8_t L1, uint8_t L2, uint8_t R1, uint8_t R2, uint8_t g
 	list->Left2->Config_kF(0, list->F, 10);
 	list->Right2->Config_kF(0, list->F, 10);
 
+	//Set robot gearbox to low gear
 	list->shifter->Set(frc::DoubleSolenoid::Value::kForward);
 
 	std::cout << "Drivetrain Done" << std::endl;
@@ -68,6 +74,7 @@ Drivetrain::Drivetrain(uint8_t L1, uint8_t L2, uint8_t R1, uint8_t R2, uint8_t g
 
 void Drivetrain::Drive(float fwd, float trn, bool autoHeading){
 
+	//
 	SmartDashboard::PutNumber("Gyro", getGyroAngle());
 	SmartDashboard::PutNumber("LEnc", GetEncPos()[0]);
 	SmartDashboard::PutNumber("REnc", GetEncPos()[1]);
@@ -115,11 +122,14 @@ void Drivetrain::Set(float Left, float Right){
 
 }
 
+//Shift the gear of the robot
 void Drivetrain::Shift(){
 
+	//If it is in low gear, switch to high
 	if(list->shifter->Get() == frc::DoubleSolenoid::Value::kForward)
 		list->shifter->Set(frc::DoubleSolenoid::Value::kReverse);
 	else
+		//Switch to low
 		list->shifter->Set(frc::DoubleSolenoid::Value::kForward);
 
 }
