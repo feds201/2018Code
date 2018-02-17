@@ -10,11 +10,11 @@ Drivetrain::Drivetrain(uint8_t L1, uint8_t L2, uint8_t R1, uint8_t R2, uint8_t g
 
 	list->gyro = new PigeonIMU(gyro);
 
-	list->accelValues = new int16_t[3];
-
 	list->gyro->SetFusedHeading(0, 10);
 
 	list->prefs = Preferences::GetInstance();
+
+	list->accel = new BuiltInAccelerometer(Accelerometer::kRange_8G);
 
 	list->Left1 = new WPI_TalonSRX(L1);
 	list->Left2 = new WPI_TalonSRX(L2);
@@ -29,6 +29,24 @@ Drivetrain::Drivetrain(uint8_t L1, uint8_t L2, uint8_t R1, uint8_t R2, uint8_t g
 	list->pcm = PCM;
 	list->shifterFWD = shifterFWD;
 	list->shifterREV = shifterREV;
+
+	list->countsPerInLo = list->encCountsPerRev*(list->gearRatioLo*(1/(2*list->pi*list->wheelR)));
+	list->countsPerInHi = list->encCountsPerRev*(list->gearRatioHi*(1/(2*list->pi*list->wheelR)));
+
+	list->metersPerCountHi = 1/(list->countsPerInHi*list->inchesPerMeter);
+	list->metersPerCountLo = 1/(list->countsPerInLo*list->inchesPerMeter);
+
+	list->metersPerCountHi *= list->maxSpeed;
+	list->metersPerCountLo *= list->maxSpeed;
+
+	list->maxVHi = list->metersPerCountHi*10;
+	list->maxVLo = list->metersPerCountLo*10;
+
+	list->accelTimeHi = list->maxVHi/list->MAXAccel;
+	list->accelTimeLo = list->maxVHi/list->MAXAccel;
+
+	list->Left2->ConfigClosedloopRamp(list->accelTimeLo, 10);
+	list->Right2->ConfigClosedloopRamp(list->accelTimeLo, 10);
 
 	list->Left1->Set(ControlMode::PercentOutput, 0);
 	list->Left2->Set(ControlMode::PercentOutput, 0);
@@ -69,13 +87,23 @@ void Drivetrain::Drive(float fwd, float trn, bool autoHeading){
 	SmartDashboard::PutNumber("LEnc", GetEncPos()[0]);
 	SmartDashboard::PutNumber("REnc", GetEncPos()[1]);
 
-	list->gyro->GetBiasedAccelerometer(list->accelValues);
+	list->gyro->GetBiasedAccelerometer(list->ba_xyz);
 
-	list->accelX = list->accelValues[0]/16384;
-	list->accelY = list->accelValues[1]/16384;
-	list->accelZ = list->accelValues[2]/16384;
+	list->accelX = list->ba_xyz[0]/16384;
+	list->accelY = list->ba_xyz[1]/16384;
+	list->accelZ = list->ba_xyz[2]/16384;
 
-	fwd *= 1-pow((list->accelX/list->MAXAccel), 3);
+	SmartDashboard::PutNumber("AccelX", list->accelX);
+	SmartDashboard::PutNumber("AccelY", list->accelY);
+	SmartDashboard::PutNumber("AccelZ", list->accelZ);
+	SmartDashboard::PutNumber("RAWAccelX", list->ba_xyz[0]);
+	SmartDashboard::PutNumber("RAWAccelY", list->ba_xyz[1]);
+	SmartDashboard::PutNumber("RAWAccelX", list->ba_xyz[2]);
+	SmartDashboard::PutNumber("AccelX_RIO", list->accel->GetX());
+	SmartDashboard::PutNumber("AccelY_RIO", list->accel->GetY());
+	SmartDashboard::PutNumber("AccelZ_RIO", list->accel->GetZ());
+
+	//fwd *= 1-pow((list->accelX/list->MAXAccel), 1);
 
 	if(trn != 0 && autoHeading)
 		list->gyro->SetFusedHeading(0, 10);
@@ -121,11 +149,17 @@ void Drivetrain::Set(float Left, float Right){
 
 void Drivetrain::Shift(){
 
-	if(list->shifter->Get() == frc::DoubleSolenoid::Value::kForward)
+	if(list->shifter->Get() == frc::DoubleSolenoid::Value::kForward){
 		list->shifter->Set(frc::DoubleSolenoid::Value::kReverse);
-	else
+		list->HiGear = true;
+		list->Left2->ConfigClosedloopRamp(list->accelTimeHi, 10);
+		list->Right2->ConfigClosedloopRamp(list->accelTimeHi, 10);
+	}else{
 		list->shifter->Set(frc::DoubleSolenoid::Value::kForward);
-
+		list->HiGear = false;
+		list->Left2->ConfigClosedloopRamp(list->accelTimeLo, 10);
+		list->Right2->ConfigClosedloopRamp(list->accelTimeLo, 10);
+	}
 }
 
 int * Drivetrain::GetEncVel(){

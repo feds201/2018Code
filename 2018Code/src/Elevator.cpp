@@ -8,6 +8,7 @@
 
 #include"Elevator.h"
 #include<iostream>
+#include"WPILib.h"
 
 Elevator::Elevator(uint8_t motorID, int PCM, int fwdsolenoid, int revsolenoid, int presToggleHi, int presToggleHiOff, int presToggleLo,  int tlimit, int blimit){
 
@@ -22,11 +23,11 @@ Elevator::Elevator(uint8_t motorID, int PCM, int fwdsolenoid, int revsolenoid, i
 	list->motor->ConfigSelectedFeedbackSensor(FeedbackDevice::CTRE_MagEncoder_Absolute, 0, 10);
 
 	list->hiPresToggle->Set(frc::DoubleSolenoid::Value::kReverse);
-	list->solenoid->Set(frc::DoubleSolenoid::Value::kReverse);
+	list->solenoid->Set(frc::DoubleSolenoid::Value::kForward);
 
 	std::cout << "Ele Init" << std::endl;
 
-	list->motor->Config_kP(0, 0, 10);
+	//list->motor->Config_kP(0, 0, 10);
 
 
 	list->motor->SetSelectedSensorPosition(0, 0, 20);
@@ -42,23 +43,39 @@ void Elevator::Move(double speed){
 		speed = 0.2;
 	}
 */
-	if(speed == 0){
+	//if(speed == 0){
 
-		list->motor->Set(ControlMode::Position, list->pos);
+		//list->motor->Set(ControlMode::Position, list->pos);
 
-	}else{
+	//}else{
 
 		list->pos = list->motor->GetSelectedSensorPosition(0);
 
+		SmartDashboard::PutNumber("Ele Enc", list->pos);
+
 	if(speed < 0 && list->bottomlimit->Get()){
-		list->motor->Set(speed);
+		list->motor->Set(ControlMode::PercentOutput, speed);
 	}else if(speed > 0 && list->toplimit->Get()){
 		list->motor->Set(ControlMode::PercentOutput, speed);
 	}else{
-		list->motor->Set(0);
+		list->motor->Set(ControlMode::PercentOutput, 0.07);
 	}
-	}
+	//}
 }
+
+void Elevator::TargetHeight(double enc){
+
+	while(list->motor->GetSelectedSensorPosition(0) < enc){
+
+		Move(-0.8);
+
+	}
+
+	Move(0);
+
+
+}
+
 
 
 void Elevator::PushHi(){

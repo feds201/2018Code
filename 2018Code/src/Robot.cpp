@@ -24,13 +24,14 @@ class Robot : public frc::SampleRobot {
 	frc::SendableChooser<std::string> lrchooser;
 	DoubleSolenoid climber;
 	Edge climb;
-	cs::UsbCamera eleCam;
-	cs::UsbCamera climbCam;
+	cs::UsbCamera cam1;
+	cs::UsbCamera cam2;
+	PowerDistributionPanel pdp;
+
 
 
 public:
 	Robot():
-
 	drive(1, 2, 4, 3, 0, 8, 1, 2),
 	joy(0),
 	joy2(1),
@@ -44,8 +45,9 @@ public:
 	pick(0, 7, 8, 3, 4, 5, 6),
 	ele(5, 8, 6, 7, 3, 4, 5, 0, 1),
 	climber(0, 1, 2),
-	eleCam(),
-	climbCam()
+	cam1(),
+	cam2(),
+	pdp(0)
 
 	{
 
@@ -74,14 +76,8 @@ public:
 		SmartDashboard::PutData("Select Side", &lrchooser);
 		SmartDashboard::PutString("Game Data", frc::DriverStation::GetInstance().GetGameSpecificMessage());
 
-		eleCam = CameraServer::GetInstance()->StartAutomaticCapture();
-		climbCam = CameraServer::GetInstance()->StartAutomaticCapture();
-		eleCam.SetExposureAuto();
-		eleCam.SetResolution(480, 360);
-		eleCam.SetFPS(0);
-		climbCam.SetExposureAuto();
-		climbCam.SetResolution(480, 360);
-		climbCam.SetFPS(15);
+		cam1 = CameraServer::GetInstance()->StartAutomaticCapture("Cam1 ", 0);
+		cam2 = CameraServer::GetInstance()->StartAutomaticCapture("Cam2", 1);
 
 	}
 
@@ -98,8 +94,10 @@ public:
 		double scDistFinal = 50;
 		double swApproachDist = 25;
 		double scApproachDist = 11.4;
-		double SpeedFast = -.3;
-		double SpeedSlow = -.3;
+		double SpeedFast = -.5;
+		double SpeedSlow = -.4;
+		int eleMiddle = 17600;
+		int eleHigh = 35270;
 
 		std::string selected = chooser.GetSelected();
 		std::string side = lrchooser.GetSelected();
@@ -173,6 +171,9 @@ public:
 						auton.Drive(SpeedFast, swDist);
 						auton.Rotate(-90);
 						auton.Drive(SpeedSlow, swApproachDist);
+						pick.Grab();
+						frc::Wait(1);
+						ele.TargetHeight(eleMiddle);
 						ele.PushLo();
 
 				break;
@@ -185,6 +186,9 @@ public:
 						auton.Drive(SpeedFast, swAlley);
 						auton.Rotate(-90);
 						auton.Drive(SpeedSlow, swDistFinal);
+						pick.Grab();
+						frc::Wait(1);
+						ele.TargetHeight(eleMiddle);
 						ele.PushLo();
 
 				break;
@@ -194,6 +198,9 @@ public:
 					SmartDashboard::PutString("Auton Info", "Robot on left, going for scale on left");
 						auton.Drive(SpeedFast, scDist);
 						auton.Rotate(-90);
+						pick.Grab();
+						frc::Wait(1);
+						ele.TargetHeight(eleHigh);
 						auton.Drive(SpeedSlow, scApproachDist);
 						ele.PushLo();
 
@@ -206,6 +213,9 @@ public:
 						auton.Rotate(-90);
 						auton.Drive(SpeedFast, scAlley);
 						auton.Rotate(90);
+						pick.Grab();
+						frc::Wait(1);
+						ele.TargetHeight(eleHigh);
 						auton.Drive(SpeedSlow, scDistFinal);
 						ele.PushLo();
 
@@ -219,6 +229,9 @@ public:
 					auton.Drive(SpeedFast, swAlley);
 					auton.Rotate(90);
 					auton.Drive(SpeedSlow, swDistFinal);
+					pick.Grab();
+					frc::Wait(1);
+					ele.TargetHeight(eleMiddle);
 					ele.PushLo();
 
 				break;
@@ -229,6 +242,9 @@ public:
 					auton.Drive(SpeedFast, swDist);
 					auton.Rotate(90);
 					auton.Drive(SpeedSlow, swApproachDist);
+					pick.Grab();
+					frc::Wait(1);
+					ele.TargetHeight(eleMiddle);
 					ele.PushLo();
 
 				break;
@@ -240,6 +256,9 @@ public:
 					auton.Rotate(90);
 					auton.Drive(SpeedFast, scAlley);
 					auton.Rotate(-90);
+					pick.Grab();
+					frc::Wait(1);
+					ele.TargetHeight(eleHigh);
 					auton.Drive(SpeedSlow, scDistFinal);
 					ele.PushLo();
 
@@ -251,6 +270,9 @@ public:
 					auton.Drive(SpeedFast, scDist);
 					auton.Rotate(90);
 					auton.Drive(SpeedSlow, scApproachDist);
+					pick.Grab();
+					frc::Wait(1);
+					ele.TargetHeight(eleHigh);
 					ele.PushLo();
 
 				break;
@@ -329,13 +351,13 @@ public:
 
 		while (IsOperatorControl() && IsEnabled()) {
 
-			if(joy.GetRawButton(8)){
-				eleCam.SetFPS(15);
-				climbCam.SetFPS(0);
-			}else if(joy.GetRawButton(7)){
-				eleCam.SetFPS(0);
-				climbCam.SetFPS(15);
-			}
+			//if(joy.GetRawButton(8)){
+				//eleCam.SetFPS(15);
+				//climbCam.SetFPS(0);
+			//}else if(joy.GetRawButton(7)){
+				//eleCam.SetFPS(0);
+				//climbCam.SetFPS(15);
+			//}
 			pickup.update(joy2.GetRawButton(6));
 			eject.update(joy2.GetRawButton(1));
 			ejectHi.update(joy2.GetRawButton(4));
@@ -389,6 +411,12 @@ public:
 			SmartDashboard::PutNumber("Right Encoder Vel", drive.GetEncVel()[1]);
 			//SmartDashboard::PutNumber("Total Amps", pdp.GetTotalCurrent());
 			//SmartDashboard::PutNumber("Total Power", pdp.GetTotalPower());
+
+			//Logger::Data
+
+			//Logger::instance()->logCSV();
+
+
 
 			frc::Wait(0.005);
 		}

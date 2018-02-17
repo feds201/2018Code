@@ -15,6 +15,7 @@ class Elevator{
 public:
 	Elevator(uint8_t motorID, int PCM, int fwdsolenoid, int revsolenoid, int presToggleHi, int presToggleHiOff, int presToggleLo, int tlimit, int blimit);
 	void Move(double speed);
+	void TargetHeight(double enc);
 	void Top();
 	void Bottom();
 	void Middle();

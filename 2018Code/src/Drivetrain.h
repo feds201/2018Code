@@ -37,6 +37,25 @@ private:
 
 		int maxSpeed = 10000;
 
+		double gearRatioHi = (40/34);
+		double gearRatioLo = (60/14)/0.74;
+		double wheelR = 3;
+		double encCountsPerRev = 4096;
+		double pi = 3.14159;
+		double countsPerInHi;
+		double countsPerInLo;
+		double maxV = 10000;
+		float inchesPerMeter = 39.37007874;
+		double metersPerCountLo;
+		double metersPerCountHi;
+		double maxVHi;
+		double maxVLo;
+		float accelTimeHi;
+		float accelTimeLo;
+
+		bool HiGear = false;
+
+
 		WPI_TalonSRX *Left1;
 		WPI_TalonSRX *Left2;
 		WPI_TalonSRX *Right1;
@@ -51,11 +70,13 @@ private:
 
 		PigeonIMU *gyro;
 
-		int16_t* accelValues;
+		int16_t ba_xyz[3];
 
 		double accelX, accelY, accelZ;
 
-		int MAXAccel;
+		BuiltInAccelerometer* accel;
+
+		int MAXAccel = 0.82;
 
 		double leftSet;
 		double rightSet;

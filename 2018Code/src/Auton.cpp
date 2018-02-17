@@ -44,13 +44,13 @@ void Auton::Rotate(double angle){
 	if(angle < 0){
 
 		while(list->drive->getGyroAngle() > angle){
-			list->drive->Drive(0, 0.2, false);
+			list->drive->Drive(0, 0.3, false);
 		}
 
 	}else{
 
 		while(list->drive->getGyroAngle() < angle){
-			list->drive->Drive(0, -0.2, false);
+			list->drive->Drive(0, -0.3, false);
 		}
 
 	}
