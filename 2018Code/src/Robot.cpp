@@ -229,8 +229,8 @@ public:
 					//RSL
 					SmartDashboard::PutString("Auton Info", "Robot on right, going for switch on left");
 					auton.Drive(SpeedZoomi, alleyDist, 100);
-					auton.Rotate(55);
-					auton.Drive(SpeedZoomi, swAlley, 100);
+					auton.Rotate(52);
+					auton.Drive(SpeedZoomi, (swAlley+25), 100);
 					auton.Rotate(55);
 					auton.Drive(SpeedSlow, swDistFinal, 8);
 					drive.Drive(0, 0, false);
@@ -258,9 +258,9 @@ public:
 					//RSCL
 					SmartDashboard::PutString("Auton Info", "Robot on right, going for scale on left");
 					auton.Drive(SpeedZoomi, alleyDist, 100);
-					auton.Rotate(57);
-					auton.Drive(SpeedZoomi, scAlley, 100);
-					auton.Rotate(-57);
+					auton.Rotate(50);
+					auton.Drive(SpeedZoomi, (scAlley+25), 100);
+					auton.Rotate(-55);
 					auton.Drive(SpeedSlow, scDistFinal, 100);
 					pick.Grab();
 					frc::Wait(1);
@@ -272,16 +272,13 @@ public:
 				case 7 :
 					//RSCR
 					SmartDashboard::PutString("Auton Info", "Robot on right, going for scale on right");
-					auton.Drive(SpeedZoomi, alleyDist, 100);
-					auton.Rotate(57);
-					auton.Drive(SpeedZoomi, scAlley, 100);
-					auton.Rotate(-57);
-					auton.Drive(SpeedSlow, scDistFinal, 100);
+					auton.Drive(SpeedFast, scDist, 100);
+					auton.Rotate(55);
+					//auton.Drive(-SpeedSlow, 5, 8);
 					pick.Grab();
 					frc::Wait(1);
 					ele.TargetHeight(eleHigh);
 					ele.PushLo(true);
-
 				break;
 
 				default :
