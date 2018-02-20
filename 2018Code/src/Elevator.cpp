@@ -9,6 +9,7 @@
 #include"Elevator.h"
 #include<iostream>
 #include"WPILib.h"
+#include"ctre/Phoenix.h"
 
 Elevator::Elevator(uint8_t motorID, int PCM, int fwdsolenoid, int revsolenoid, int presToggleHi, int presToggleHiOff, int presToggleLo,  int tlimit, int blimit){
 
@@ -67,7 +68,7 @@ void Elevator::TargetHeight(double enc){
 
 	while(list->motor->GetSelectedSensorPosition(0) < enc){
 
-		Move(-0.8);
+		Move(0.8);
 
 	}
 
@@ -93,8 +94,8 @@ void Elevator::PushHi(){
 
 }
 
-void Elevator::PushLo(){
-
+void Elevator::PushLo(bool push){
+/*
 	if(list->solenoid->Get() == frc::DoubleSolenoid::Value::kForward){
 		list->hiPresToggle->Set(frc::DoubleSolenoid::Value::kReverse);
 		list->loPresToggle->Set(true);
@@ -105,7 +106,17 @@ void Elevator::PushLo(){
 		list->solenoid->Set(frc::DoubleSolenoid::Value::kForward);
 	}
 
+*/
+
+	if(push){
+		list->solenoid->Set(frc::DoubleSolenoid::Value::kReverse);
+	}else{
+		list->solenoid->Set(frc::DoubleSolenoid::Value::kForward);
+	}
 
 
 }
 
+double  Elevator::getHeight(){
+	return list->motor->GetSelectedSensorPosition(0);
+}

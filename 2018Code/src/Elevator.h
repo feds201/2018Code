@@ -16,12 +16,14 @@ public:
 	Elevator(uint8_t motorID, int PCM, int fwdsolenoid, int revsolenoid, int presToggleHi, int presToggleHiOff, int presToggleLo, int tlimit, int blimit);
 	void Move(double speed);
 	void TargetHeight(double enc);
+	double getHeight();
 	void Top();
 	void Bottom();
 	void Middle();
 	void PushHi();
-	void PushLo();
+	void PushLo(bool push);
 	void Refresh();
+	void Panik(bool yee);
 
 private:
 
@@ -40,6 +42,7 @@ private:
 		bool wastop = false;
 		bool wasbottom = false;
 		double pos = 0;
+		bool panik = false;
 
 	};
 

@@ -3,8 +3,9 @@
 #include"ctre/Phoenix.h"
 #include<iostream>
 #include"Math.h"
+#include"Elevator.h"
 
-Drivetrain::Drivetrain(uint8_t L1, uint8_t L2, uint8_t R1, uint8_t R2, uint8_t gyro, int PCM, int shifterFWD, int shifterREV){
+Drivetrain::Drivetrain(uint8_t L1, uint8_t L2, uint8_t R1, uint8_t R2, uint8_t gyro, int PCM, int shifterFWD, int shifterREV, Elevator* ele){
 
 	list = new struct driveList;
 
@@ -14,7 +15,7 @@ Drivetrain::Drivetrain(uint8_t L1, uint8_t L2, uint8_t R1, uint8_t R2, uint8_t g
 
 	list->prefs = Preferences::GetInstance();
 
-	list->accel = new BuiltInAccelerometer(Accelerometer::kRange_8G);
+	//list->accel = new BuiltInAccelerometer(Accelerometer::kRange_8G);
 
 	list->Left1 = new WPI_TalonSRX(L1);
 	list->Left2 = new WPI_TalonSRX(L2);
@@ -42,8 +43,14 @@ Drivetrain::Drivetrain(uint8_t L1, uint8_t L2, uint8_t R1, uint8_t R2, uint8_t g
 	list->maxVHi = list->metersPerCountHi*10;
 	list->maxVLo = list->metersPerCountLo*10;
 
-	list->accelTimeHi = list->maxVHi/list->MAXAccel;
+	list->accelTimeHi = list->maxVHi/list->MaxAccelHi;
 	list->accelTimeLo = list->maxVHi/list->MAXAccel;
+
+	list->accelHiUp = list->maxVHi/list->MaxAccelHi;
+	list->accelLoUp = list->maxVLo/list->MAxAccelUp;
+
+	list->mHi = (list->accelHiUp-list->accelTimeHi)/35270;
+	list->mLo = (list->accelLoUp-list->accelTimeLo)/35270;
 
 	list->Left2->ConfigClosedloopRamp(list->accelTimeLo, 10);
 	list->Right2->ConfigClosedloopRamp(list->accelTimeLo, 10);
@@ -79,6 +86,9 @@ Drivetrain::Drivetrain(uint8_t L1, uint8_t L2, uint8_t R1, uint8_t R2, uint8_t g
 
 	std::cout << "Drivetrain Done" << std::endl;
 
+	list->currTime = list->accelTimeLo;
+	list->lastTime = list->currTime;
+
 }
 
 void Drivetrain::Drive(float fwd, float trn, bool autoHeading){
@@ -87,12 +97,32 @@ void Drivetrain::Drive(float fwd, float trn, bool autoHeading){
 	SmartDashboard::PutNumber("LEnc", GetEncPos()[0]);
 	SmartDashboard::PutNumber("REnc", GetEncPos()[1]);
 
-	list->gyro->GetBiasedAccelerometer(list->ba_xyz);
+	//list->gyro->GetBiasedAccelerometer(list->ba_xyz);
 
-	list->accelX = list->ba_xyz[0]/16384;
-	list->accelY = list->ba_xyz[1]/16384;
-	list->accelZ = list->ba_xyz[2]/16384;
+/*
 
+	if(list->HiGear){
+
+		list->currTime = (list->mHi*list->ele->getHeight())+list->accelTimeHi;
+
+	}else{
+
+		list->currTime = (list->mLo*list->ele->getHeight())+list->accelTimeLo;
+
+	}
+	*/
+/*
+	if(list->lastTime != list->currTime){
+		list->Left2->ConfigClosedloopRamp(list->currTime, 10);
+		list->Right2->ConfigClosedloopRamp(list->currTime, 10);
+		list->lastTime = list->currTime;
+	}
+*/
+	//list->accelX = list->ba_xyz[0]/16384;
+	//list->accelY = list->ba_xyz[1]/16384;
+	//list->accelZ = list->ba_xyz[2]/16384;
+
+	/*
 	SmartDashboard::PutNumber("AccelX", list->accelX);
 	SmartDashboard::PutNumber("AccelY", list->accelY);
 	SmartDashboard::PutNumber("AccelZ", list->accelZ);
@@ -102,7 +132,7 @@ void Drivetrain::Drive(float fwd, float trn, bool autoHeading){
 	SmartDashboard::PutNumber("AccelX_RIO", list->accel->GetX());
 	SmartDashboard::PutNumber("AccelY_RIO", list->accel->GetY());
 	SmartDashboard::PutNumber("AccelZ_RIO", list->accel->GetZ());
-
+*/
 	//fwd *= 1-pow((list->accelX/list->MAXAccel), 1);
 
 	if(trn != 0 && autoHeading)
@@ -192,4 +222,12 @@ double Drivetrain::getGyroAngle(){
 
 void Drivetrain::setGyroAngle(double angle){
 	list->gyro->SetFusedHeading(angle, 10);
+}
+
+float * Drivetrain::GetCurr(){
+
+	list->current[0] = list->Left2->GetOutputCurrent();
+	list->current[1] = list->Right2->GetOutputCurrent();
+
+	return list->current;
 }

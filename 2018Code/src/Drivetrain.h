@@ -10,18 +10,20 @@
 
 #include"WPILib.h"
 #include"ctre/Phoenix.h"
+#include"Elevator.h"
 
 class Drivetrain{
 
 public:
 
-	Drivetrain(uint8_t L1, uint8_t L2, uint8_t R1, uint8_t R2, uint8_t gyro, int PCM, int shifterFWD, int shifterREV);
+	Drivetrain(uint8_t L1, uint8_t L2, uint8_t R1, uint8_t R2, uint8_t gyro, int PCM, int shifterFWD, int shifterREV, Elevator* ele);
 	void Drive(float fwd, float trn, bool autoHeading);
 	void directSet(float left, float right);
 	void Set(float Left, float Right);
 	void Shift();
 	int * GetEncVel();
 	int * GetEncPos();
+	float * GetCurr();
 	void SetEncPos(double left, double right);
 	double getGyroAngle();
 	void setGyroAngle(double angle);
@@ -37,8 +39,8 @@ private:
 
 		int maxSpeed = 10000;
 
-		double gearRatioHi = (40/34);
-		double gearRatioLo = (60/14)/0.74;
+		double gearRatioHi = (40/34)/0.597;
+		double gearRatioLo = (60/14)/0.741;
 		double wheelR = 3;
 		double encCountsPerRev = 4096;
 		double pi = 3.14159;
@@ -52,9 +54,18 @@ private:
 		double maxVLo;
 		float accelTimeHi;
 		float accelTimeLo;
+		float mLo;
+		float mHi;
+		float accelHiUp;
+		float accelLoUp;
+		float currTime;
+		float current[2];
 
 		bool HiGear = false;
 
+		Elevator *ele;
+
+		float lastTime;
 
 		WPI_TalonSRX *Left1;
 		WPI_TalonSRX *Left2;
@@ -74,9 +85,11 @@ private:
 
 		double accelX, accelY, accelZ;
 
-		BuiltInAccelerometer* accel;
+	//	BuiltInAccelerometer* accel;
 
-		int MAXAccel = 0.82;
+		float MAXAccel = 8.72;
+		float MaxAccelHi = 8.6;
+		float MAxAccelUp = 6.8;
 
 		double leftSet;
 		double rightSet;
