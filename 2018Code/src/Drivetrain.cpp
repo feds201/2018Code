@@ -242,7 +242,7 @@ double Drivetrain::getGyroAngle(){
 	return list->gyro->GetFusedHeading();
 }
 
-//Set angle of gyro, second parameter is timeout in millseconds (not important)
+//Set angle of gyro, second parameter of SetFusedHeading is timeout in millseconds (not important)
 void Drivetrain::setGyroAngle(double angle){
 	list->gyro->SetFusedHeading(angle, 10);
 }

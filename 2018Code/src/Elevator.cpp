@@ -65,10 +65,13 @@ void Elevator::Move(double speed){
 
 		//}else{
 
-			list->pos = list->motor->GetSelectedSensorPosition(0);
+		//Get the height of the elevator in encoder countd and put it on the shuffleboard
+		list->pos = list->motor->GetSelectedSensorPosition(0);
+		SmartDashboard::PutNumber("Ele Enc", list->pos);
 
-			SmartDashboard::PutNumber("Ele Enc", list->pos);
+		//Percent output is -1 to 1 enumerator
 
+		//Moves ele with restrictions on moving up and down
 		if(speed < 0 && list->bottomlimit->Get()){
 			list->motor->Set(ControlMode::PercentOutput, speed);
 		}else if(speed > 0 && list->toplimit->Get()){
@@ -79,19 +82,21 @@ void Elevator::Move(double speed){
 	//}
 }
 
+//Moves elevator to target height
 void Elevator::TargetHeight(double enc){
 
+	//While the current height is less than the target height keep moving it (what does it do when its greater)
 	while(list->motor->GetSelectedSensorPosition(0) < enc){
 
 		Move(0.8);
 	}
 
+	//Stop elevator
 	Move(0);
 
 }
 
-//Still questions on this vv
-
+//Don't use
 void Elevator::PushHi(){
 
 	//If cube pushing solenoid is in kForward, switch low pressure solenoid to true, and retract cube pusher
@@ -134,6 +139,7 @@ void Elevator::PushLo(bool push){
 
 }
 
+//Gets the height of the elevator in encoder counts
 double  Elevator::getHeight(){
 	return list->motor->GetSelectedSensorPosition(0);
 }

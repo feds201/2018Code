@@ -10,31 +10,61 @@
 #include <iostream>
 #include"CameraServer.h"
 
+//Class where everything is executed, inherits SampleRobot class publicly
 class Robot : public frc::SampleRobot {
 
+	//Drivetrain object
 	Drivetrain drive;
+
+	//XBox controllers, joy is driver controller, joy2 is operator controller
 	Joystick joy, joy2;
+
+	//Allows you to control compressors on robot
 	Compressor comp;
+
+	//Autonomous object
 	Auton auton;
+
+	//Button objects for shifting gears, pickup device, and ejecting
 	Edge shift, pickup, eject, ejectHi;
+
+	//Button for clamping with pickup
 	Edge clamp;
+
+	//Pickup object
 	Pickup pick;
+
+	//Elevator object
 	Elevator ele;
+
+	//Object for getting auton field input for scale/switch
 	frc::SendableChooser<std::string> chooser;
+
+	//Object for getting auton field input for left/right
 	frc::SendableChooser<std::string> lrchooser;
+
+	//Solenoid used for climbing
 	DoubleSolenoid climber;
+
+	//Button pressed to climb
 	Edge climb;
+
+	//Cameras (don't know which is which)
 	cs::UsbCamera cam1;
 	cs::UsbCamera cam2;
+
+	//PDP Object used to read data from PDP
 	PowerDistributionPanel pdp;
+
+	//Object that reads how much pressure is left inside tanks
 	AnalogInput pressure;
-
-
 
 public:
 
 	//Constructor for robot, uses initializer list
 	Robot():
+
+	//
 	drive(1, 2, 4, 3, 0, 8, 1, 2, &ele),
 	joy(0),
 	joy2(1),
@@ -58,6 +88,7 @@ public:
 
 	}
 
+	//Runs when robot is started
 	void RobotInit() {
 
 		drive.SetEncPos(0, 0);
@@ -65,6 +96,7 @@ public:
 		drive.SetEncPos(0, 0);
 		drive.setGyroAngle(0);
 
+		//Constant string values
 		const std::string sw = "Switch";
 		const std::string sc = "Scale";
 		const std::string l = "Left";
