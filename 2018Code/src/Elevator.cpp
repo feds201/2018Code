@@ -142,4 +142,5 @@ void Elevator::PushLo(bool push){
 //Gets the height of the elevator in encoder counts
 double  Elevator::getHeight(){
 	return list->motor->GetSelectedSensorPosition(0);
+
 }

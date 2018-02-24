@@ -91,6 +91,7 @@ public:
 	//Runs when robot is started
 	void RobotInit() {
 
+		//Sets e
 		drive.SetEncPos(0, 0);
 		drive.setGyroAngle(0);
 		drive.SetEncPos(0, 0);
@@ -471,5 +472,6 @@ public:
 	void Test() override {}
 
 };
+
 
 START_ROBOT_CLASS(Robot)

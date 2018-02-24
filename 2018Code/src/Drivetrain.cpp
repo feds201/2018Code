@@ -235,6 +235,7 @@ void Drivetrain::SetEncPos(double left, double right){
 
 	list->Left2->SetSelectedSensorPosition(left, 0, 10);
 	list->Right2->SetSelectedSensorPosition(right, 0, 10);
+
 }
 
 //Get angle of PigeonIMU gyro
