@@ -9,7 +9,7 @@
 
 //Class to check if a button is being pressed, not held down
 
-//Don't get how this constructor is organized and how variables are treated as var()?? vv
+//Uses initializer list to initialize last time and this time to inital parameter
 Edge::Edge(bool inital) :
 lastTime(inital),
 thisTime(inital)
@@ -30,7 +30,7 @@ bool Edge::isPressed()
 
 }
 
-//Return this time? Don't think it's used. vv
+//Not used
 bool Edge::getState(){
 
 	return thisTime;

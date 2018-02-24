@@ -19,7 +19,6 @@ Pickup::Pickup(uint8_t PCM, uint8_t m1id, uint8_t m2id, int up, int down, int in
 
 	//Create DoubleSolenoid object, controls arm going up and down. PCM- canID for pneumatic control module, up- ports on the PCM that make arm go up, down is opposite
 	solenoid = new DoubleSolenoid(PCM, up, down);
-
 	sqSol = new DoubleSolenoid(PCM, in , out);
 
 	//Makes new motors, m1id & m2id are canIDs of CANTALONS

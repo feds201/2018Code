@@ -39,7 +39,7 @@ Elevator::Elevator(uint8_t motorID, int PCM, int fwdsolenoid, int revsolenoid, i
 	list->hiPresToggle->Set(frc::DoubleSolenoid::Value::kReverse);
 	list->solenoid->Set(frc::DoubleSolenoid::Value::kForward);
 
-	//Prints to driver station
+	//Prints to console in driver station, not shuffleboard
 	std::cout << "Ele Init" << std::endl;
 
 	//list->motor->Config_kP(0, 0, 10);

@@ -20,6 +20,7 @@ Drivetrain::Drivetrain(uint8_t L1, uint8_t L2, uint8_t R1, uint8_t R2, uint8_t g
 
 	//list->accel = new BuiltInAccelerometer(Accelerometer::kRange_8G);
 
+	//Initialize motors with canIDs
 	list->Left1 = new WPI_TalonSRX(L1);
 	list->Left2 = new WPI_TalonSRX(L2);
 	list->Right1 = new WPI_TalonSRX(R1);
@@ -191,16 +192,24 @@ void Drivetrain::Set(float Left, float Right){
 //Shift the gear of the robot
 void Drivetrain::Shift(){
 
+	//If robot is in low gear, switch to high and set HiGear to true
 	if(list->shifter->Get() == frc::DoubleSolenoid::Value::kForward){
 			list->shifter->Set(frc::DoubleSolenoid::Value::kReverse);
 			list->HiGear = true;
+
+			//Configure ramping times on motors to suit High Gear
 			list->Left2->ConfigClosedloopRamp(list->accelTimeHi, 10);
 			list->Right2->ConfigClosedloopRamp(list->accelTimeHi, 10);
-		}else{
-			list->shifter->Set(frc::DoubleSolenoid::Value::kForward);
-			list->HiGear = false;
-			list->Left2->ConfigClosedloopRamp(list->accelTimeLo, 10);
-			list->Right2->ConfigClosedloopRamp(list->accelTimeLo, 10);
+		}
+
+	//If robot is in high gear set it to low and set HiGeat to false
+	else{
+		list->shifter->Set(frc::DoubleSolenoid::Value::kForward);
+		list->HiGear = false;
+
+		//Configure ramping times on motors to suit Low Gear
+		list->Left2->ConfigClosedloopRamp(list->accelTimeLo, 10);
+		list->Right2->ConfigClosedloopRamp(list->accelTimeLo, 10);
 	}
 }
 
@@ -228,10 +237,12 @@ void Drivetrain::SetEncPos(double left, double right){
 	list->Right2->SetSelectedSensorPosition(right, 0, 10);
 }
 
+//Get angle of PigeonIMU gyro
 double Drivetrain::getGyroAngle(){
 	return list->gyro->GetFusedHeading();
 }
 
+//Set angle of gyro, second parameter is timeout in millseconds (not important)
 void Drivetrain::setGyroAngle(double angle){
 	list->gyro->SetFusedHeading(angle, 10);
 }

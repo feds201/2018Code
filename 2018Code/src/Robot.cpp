@@ -32,6 +32,8 @@ class Robot : public frc::SampleRobot {
 
 
 public:
+
+	//Constructor for robot, uses initializer list
 	Robot():
 	drive(1, 2, 4, 3, 0, 8, 1, 2, &ele),
 	joy(0),
