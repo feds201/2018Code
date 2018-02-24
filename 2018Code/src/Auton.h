@@ -19,7 +19,7 @@ class Auton{
 public:
 
 Auton(Drivetrain* drive);
-void Drive(double speed, double dist);
+void Drive(double speed, double dist, float current);
 void Rotate(double angle);
 void Arc(double speed, double turnAngle, double radius);
 
@@ -36,10 +36,10 @@ private:
 
 
 		bool hasTurned = false;
-		bool offSet = 0;
+		bool offSet = 8;
 
-		double gearRatioHi = (40/34);
-		double gearRatioLo = (60/14);
+		double gearRatioHi = (40/34)/0.597;
+		double gearRatioLo = (60/14)/0.74;
 		double wheelR = 3;
 		double encCountsPerRev = 4096;
 		double pi = 3.14159;

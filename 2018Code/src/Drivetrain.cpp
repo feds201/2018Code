@@ -2,8 +2,10 @@
 #include"WPILib.h"
 #include"ctre/Phoenix.h"
 #include<iostream>
+#include"Math.h"
+#include"Elevator.h"
 
-Drivetrain::Drivetrain(uint8_t L1, uint8_t L2, uint8_t R1, uint8_t R2, uint8_t gyro, int PCM, int shifterFWD, int shifterREV){
+Drivetrain::Drivetrain(uint8_t L1, uint8_t L2, uint8_t R1, uint8_t R2, uint8_t gyro, int PCM, int shifterFWD, int shifterREV, Elevator* ele){
 
 	list = new struct driveList;
 
@@ -16,7 +18,8 @@ Drivetrain::Drivetrain(uint8_t L1, uint8_t L2, uint8_t R1, uint8_t R2, uint8_t g
 	// vv
 	list->prefs = Preferences::GetInstance();
 
-	//Initializes motors with CANIDs
+	//list->accel = new BuiltInAccelerometer(Accelerometer::kRange_8G);
+
 	list->Left1 = new WPI_TalonSRX(L1);
 	list->Left2 = new WPI_TalonSRX(L2);
 	list->Right1 = new WPI_TalonSRX(R1);
@@ -34,7 +37,30 @@ Drivetrain::Drivetrain(uint8_t L1, uint8_t L2, uint8_t R1, uint8_t R2, uint8_t g
 	list->shifterFWD = shifterFWD;
 	list->shifterREV = shifterREV;
 
-	//
+	list->countsPerInLo = list->encCountsPerRev*(list->gearRatioLo*(1/(2*list->pi*list->wheelR)));
+	list->countsPerInHi = list->encCountsPerRev*(list->gearRatioHi*(1/(2*list->pi*list->wheelR)));
+
+	list->metersPerCountHi = 1/(list->countsPerInHi*list->inchesPerMeter);
+	list->metersPerCountLo = 1/(list->countsPerInLo*list->inchesPerMeter);
+
+	list->metersPerCountHi *= list->maxSpeed;
+	list->metersPerCountLo *= list->maxSpeed;
+
+	list->maxVHi = list->metersPerCountHi*10;
+	list->maxVLo = list->metersPerCountLo*10;
+
+	list->accelTimeHi = list->maxVHi/list->MaxAccelHi;
+	list->accelTimeLo = list->maxVHi/list->MAXAccel;
+
+	list->accelHiUp = list->maxVHi/list->MaxAccelHi;
+	list->accelLoUp = list->maxVLo/list->MAxAccelUp;
+
+	list->mHi = (list->accelHiUp-list->accelTimeHi)/35270;
+	list->mLo = (list->accelLoUp-list->accelTimeLo)/35270;
+
+	list->Left2->ConfigClosedloopRamp(list->accelTimeLo, 10);
+	list->Right2->ConfigClosedloopRamp(list->accelTimeLo, 10);
+
 	list->Left1->Set(ControlMode::PercentOutput, 0);
 	list->Left2->Set(ControlMode::PercentOutput, 0);
 	list->Right1->Set(ControlMode::PercentOutput, 0);
@@ -70,6 +96,9 @@ Drivetrain::Drivetrain(uint8_t L1, uint8_t L2, uint8_t R1, uint8_t R2, uint8_t g
 
 	std::cout << "Drivetrain Done" << std::endl;
 
+	list->currTime = list->accelTimeLo;
+	list->lastTime = list->currTime;
+
 }
 
 void Drivetrain::Drive(float fwd, float trn, bool autoHeading){
@@ -79,6 +108,43 @@ void Drivetrain::Drive(float fwd, float trn, bool autoHeading){
 	SmartDashboard::PutNumber("LEnc", GetEncPos()[0]);
 	SmartDashboard::PutNumber("REnc", GetEncPos()[1]);
 
+	//list->gyro->GetBiasedAccelerometer(list->ba_xyz);
+
+/*
+
+	if(list->HiGear){
+
+		list->currTime = (list->mHi*list->ele->getHeight())+list->accelTimeHi;
+
+	}else{
+
+		list->currTime = (list->mLo*list->ele->getHeight())+list->accelTimeLo;
+
+	}
+	*/
+/*
+	if(list->lastTime != list->currTime){
+		list->Left2->ConfigClosedloopRamp(list->currTime, 10);
+		list->Right2->ConfigClosedloopRamp(list->currTime, 10);
+		list->lastTime = list->currTime;
+	}
+*/
+	//list->accelX = list->ba_xyz[0]/16384;
+	//list->accelY = list->ba_xyz[1]/16384;
+	//list->accelZ = list->ba_xyz[2]/16384;
+
+	/*
+	SmartDashboard::PutNumber("AccelX", list->accelX);
+	SmartDashboard::PutNumber("AccelY", list->accelY);
+	SmartDashboard::PutNumber("AccelZ", list->accelZ);
+	SmartDashboard::PutNumber("RAWAccelX", list->ba_xyz[0]);
+	SmartDashboard::PutNumber("RAWAccelY", list->ba_xyz[1]);
+	SmartDashboard::PutNumber("RAWAccelX", list->ba_xyz[2]);
+	SmartDashboard::PutNumber("AccelX_RIO", list->accel->GetX());
+	SmartDashboard::PutNumber("AccelY_RIO", list->accel->GetY());
+	SmartDashboard::PutNumber("AccelZ_RIO", list->accel->GetZ());
+*/
+	//fwd *= 1-pow((list->accelX/list->MAXAccel), 1);
 
 	if(trn != 0 && autoHeading)
 		list->gyro->SetFusedHeading(0, 10);
@@ -125,13 +191,17 @@ void Drivetrain::Set(float Left, float Right){
 //Shift the gear of the robot
 void Drivetrain::Shift(){
 
-	//If it is in low gear, switch to high
-	if(list->shifter->Get() == frc::DoubleSolenoid::Value::kForward)
-		list->shifter->Set(frc::DoubleSolenoid::Value::kReverse);
-	else
-		//Switch to low
-		list->shifter->Set(frc::DoubleSolenoid::Value::kForward);
-
+	if(list->shifter->Get() == frc::DoubleSolenoid::Value::kForward){
+			list->shifter->Set(frc::DoubleSolenoid::Value::kReverse);
+			list->HiGear = true;
+			list->Left2->ConfigClosedloopRamp(list->accelTimeHi, 10);
+			list->Right2->ConfigClosedloopRamp(list->accelTimeHi, 10);
+		}else{
+			list->shifter->Set(frc::DoubleSolenoid::Value::kForward);
+			list->HiGear = false;
+			list->Left2->ConfigClosedloopRamp(list->accelTimeLo, 10);
+			list->Right2->ConfigClosedloopRamp(list->accelTimeLo, 10);
+	}
 }
 
 int * Drivetrain::GetEncVel(){
@@ -164,4 +234,12 @@ double Drivetrain::getGyroAngle(){
 
 void Drivetrain::setGyroAngle(double angle){
 	list->gyro->SetFusedHeading(angle, 10);
+}
+
+float * Drivetrain::GetCurr(){
+
+	list->current[0] = list->Left2->GetOutputCurrent();
+	list->current[1] = list->Right2->GetOutputCurrent();
+
+	return list->current;
 }

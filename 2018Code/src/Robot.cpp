@@ -8,6 +8,7 @@
 #include "Pickup.h"
 #include <SmartDashboard/SendableChooser.h>
 #include <iostream>
+#include"CameraServer.h"
 
 class Robot : public frc::SampleRobot {
 
@@ -16,19 +17,23 @@ class Robot : public frc::SampleRobot {
 	Compressor comp;
 	Auton auton;
 	Edge shift, pickup, eject, ejectHi;
-	//Edge bottom, middle, top;
 	Edge clamp;
 	Pickup pick;
 	Elevator ele;
-	//WPI_TalonSRX m1;
-	//WPI_TalonSRX m2;
 	frc::SendableChooser<std::string> chooser;
 	frc::SendableChooser<std::string> lrchooser;
+	DoubleSolenoid climber;
+	Edge climb;
+	cs::UsbCamera cam1;
+	cs::UsbCamera cam2;
+	PowerDistributionPanel pdp;
+	AnalogInput pressure;
+
+
 
 public:
 	Robot():
-
-	drive(1, 2, 4, 3, 0, 8, 1, 2),
+	drive(1, 2, 4, 3, 0, 8, 1, 2, &ele),
 	joy(0),
 	joy2(1),
 	comp(8),
@@ -37,12 +42,14 @@ public:
 	pickup(joy2.GetRawButton(5)),
 	eject(joy2.GetRawButton(1)),
 	ejectHi(joy2.GetRawButton(4)),
-	//bottom(joy2.GetRawButton(1)),
-	//middle(joy2.GetRawButton(2)),
-	//top(joy2.GetRawButton(4)),
 	clamp(joy2.GetRawButton(6)),
 	pick(0, 7, 8, 3, 4, 5, 6),
-	ele(5, 8, 6, 7, 3, 4, 5, 0, 1)
+	ele(5, 8, 6, 7, 3, 4, 5, 0, 1),
+	climber(0, 1, 2),
+	cam1(),
+	cam2(),
+	pdp(0),
+	pressure(0)
 
 	{
 
@@ -67,10 +74,12 @@ public:
 		lrchooser.AddDefault("Left", l);
 		lrchooser.AddObject("Right", r);
 
-
 		SmartDashboard::PutData("Auto Modes", &chooser);
 		SmartDashboard::PutData("Select Side", &lrchooser);
 		SmartDashboard::PutString("Game Data", frc::DriverStation::GetInstance().GetGameSpecificMessage());
+
+		cam1 = CameraServer::GetInstance()->StartAutomaticCapture("Cam1 ", 0);
+		cam2 = CameraServer::GetInstance()->StartAutomaticCapture("Cam2", 1);
 
 	}
 
@@ -78,17 +87,20 @@ public:
 
 
 
-		double swDist = 154;
-		double alleyDist = 222;
-		double scDist = 310;
-		double swAlley = 174.5;
-		double scAlley = 188.2;
-		double swDistFinal = 25.75;
-		double scDistFinal = 50;
+		double swDist = 132;
+		double alleyDist = 169;
+		double scDist = 298;
+		double swAlley = 103;
+		double scAlley = 136;
+		double swDistFinal = 40;
+		double scDistFinal = 21;
 		double swApproachDist = 25;
 		double scApproachDist = 11.4;
-		double SpeedFast = -.5;
-		double SpeedSlow = -.3;
+		double SpeedFast = -.7; // -0.7
+		double SpeedSlow = -.4; // -0.4
+		double SpeedZoomi = -0.9;
+		int eleMiddle = 17600;
+		int eleHigh = 35270;
 
 		std::string selected = chooser.GetSelected();
 		std::string side = lrchooser.GetSelected();
@@ -159,103 +171,120 @@ public:
 				case 0 :
 					//LSL
 					SmartDashboard::PutString("Auton Info", "Robot on left, going for switch on left");
-						auton.Drive(SpeedFast, swDist);
-						auton.Rotate(-90);
-						auton.Drive(SpeedSlow, swApproachDist);
-						ele.Middle();
-						ele.PushLo();
+						auton.Drive(SpeedFast, swDist, 100);
+						auton.Rotate(-55);
+						auton.Drive(SpeedSlow, swApproachDist, 7);
+						pick.Grab();
+						frc::Wait(1);
+						ele.TargetHeight(eleMiddle);
+						ele.PushLo(true);
 
 				break;
 
 				case 1 :
 					//LSR
 					SmartDashboard::PutString("Auton Info", "Robot on left, going for switch on right");
-						auton.Drive(SpeedFast, alleyDist);
-						auton.Rotate(-90);
-						auton.Drive(SpeedFast, swAlley);
-						auton.Rotate(-90);
-						auton.Drive(SpeedSlow, swDistFinal);
-						ele.Middle();
-						ele.PushLo();
+						auton.Drive(SpeedZoomi, alleyDist, 100);
+						auton.Rotate(-55);
+						auton.Drive(SpeedZoomi, swAlley, 100);
+						auton.Rotate(-55);
+						auton.Drive(SpeedSlow, swDistFinal, 8);
+						drive.Drive(0, 0, false);
+						pick.Grab();
+						frc::Wait(1);
+						ele.TargetHeight(eleMiddle);
+						ele.PushLo(true);
 
 				break;
 
 				case 2 :
 					//LSCL
 					SmartDashboard::PutString("Auton Info", "Robot on left, going for scale on left");
-						auton.Drive(SpeedFast, scDist);
-						auton.Rotate(-90);
-						auton.Drive(SpeedSlow, scApproachDist);
-						ele.Top();
-						ele.PushLo();
+						auton.Drive(SpeedFast, scDist, 100);
+						auton.Rotate(-55);
+						auton.Drive(-SpeedSlow, 5, 3);
+						pick.Grab();
+						frc::Wait(1);
+						ele.TargetHeight(eleHigh);
+						ele.PushLo(true);
 
 				break;
 
 				case 3 :
 					//LSCR
 					SmartDashboard::PutString("Auton Info", "Robot on left, going for scale on right");
-						auton.Drive(SpeedFast, alleyDist);
-						auton.Rotate(-90);
-						auton.Drive(SpeedFast, scAlley);
-						auton.Rotate(90);
-						auton.Drive(SpeedSlow, scDistFinal);
-						ele.Top();
-						ele.PushLo();
+						auton.Drive(SpeedZoomi, alleyDist, 100);
+						auton.Rotate(-57);
+						auton.Drive(SpeedZoomi, scAlley, 100);
+						auton.Rotate(57);
+						auton.Drive(SpeedSlow, scDistFinal, 100);
+						pick.Grab();
+						frc::Wait(1);
+						ele.TargetHeight(eleHigh);
+						ele.PushLo(true);
 
 				break;
 
 				case 4 :
 					//RSL
 					SmartDashboard::PutString("Auton Info", "Robot on right, going for switch on left");
-					auton.Drive(SpeedFast, alleyDist);
-					auton.Rotate(90);
-					auton.Drive(SpeedFast, swAlley);
-					auton.Rotate(90);
-					auton.Drive(SpeedSlow, swDistFinal);
-					ele.Middle();
-					ele.PushLo();
+					auton.Drive(SpeedZoomi, alleyDist, 100);
+					auton.Rotate(52);
+					auton.Drive(SpeedZoomi, (swAlley+25), 100);
+					auton.Rotate(55);
+					auton.Drive(SpeedSlow, swDistFinal, 8);
+					drive.Drive(0, 0, false);
+					pick.Grab();
+					frc::Wait(1);
+					ele.TargetHeight(eleMiddle);
+					ele.PushLo(true);
 
 				break;
 
 				case 5 :
 					//RSR
 					SmartDashboard::PutString("Auton Info", "Robot on right, going for switch on right");
-					auton.Drive(SpeedFast, swDist);
-					auton.Rotate(90);
-					auton.Drive(SpeedSlow, swApproachDist);
-					ele.Middle();
-					ele.PushLo();
+					auton.Drive(SpeedFast, swDist, 100);
+					auton.Rotate(55);
+					auton.Drive(SpeedSlow, swApproachDist, 7);
+					pick.Grab();
+					frc::Wait(1);
+					ele.TargetHeight(eleMiddle);
+					ele.PushLo(true);
 
 				break;
 
 				case 6 :
 					//RSCL
 					SmartDashboard::PutString("Auton Info", "Robot on right, going for scale on left");
-					auton.Drive(SpeedFast, alleyDist);
-					auton.Rotate(90);
-					auton.Drive(SpeedFast, scAlley);
-					auton.Rotate(-90);
-					auton.Drive(SpeedSlow, scDistFinal);
-					ele.Top();
-					ele.PushLo();
+					auton.Drive(SpeedZoomi, alleyDist, 100);
+					auton.Rotate(50);
+					auton.Drive(SpeedZoomi, (scAlley+25), 100);
+					auton.Rotate(-55);
+					auton.Drive(SpeedSlow, scDistFinal, 100);
+					pick.Grab();
+					frc::Wait(1);
+					ele.TargetHeight(eleHigh);
+					ele.PushLo(true);
 
 				break;
 
 				case 7 :
 					//RSCR
 					SmartDashboard::PutString("Auton Info", "Robot on right, going for scale on right");
-					auton.Drive(SpeedFast, scDist);
-					auton.Rotate(90);
-					auton.Drive(SpeedSlow, scApproachDist);
-					ele.Top();
-					ele.PushLo();
-
+					auton.Drive(SpeedFast, scDist, 100);
+					auton.Rotate(55);
+					//auton.Drive(-SpeedSlow, 5, 8);
+					pick.Grab();
+					frc::Wait(1);
+					ele.TargetHeight(eleHigh);
+					ele.PushLo(true);
 				break;
 
 				default :
 					//Just Go FWD
 					SmartDashboard::PutString("Auton Info", "No Auton, Just going fwd and stoping");
-						auton.Drive(SpeedFast, 30);
+						auton.Drive(SpeedFast, 30, 100);
 				break;
 
 				}
@@ -273,7 +302,7 @@ public:
 		auton.Drive(-0.3, 18);
 		m1.Set(1);
 		m2.Set(1);
-		frc::Wait(4);
+		frc::Wait(4);s
 		m1.Set(0);
 		m2.Set(0);
 		drive.setGyroAngle(0);
@@ -322,9 +351,24 @@ public:
 		comp.SetClosedLoopControl(true);
 		drive.SetEncPos(0, 0);
 		drive.setGyroAngle(0);
+		climber.Set(frc::DoubleSolenoid::Value::kReverse);
+		bool panik = false;
+		drive.SetEncPos(0, 0);
 
 		while (IsOperatorControl() && IsEnabled()) {
 
+			if (joy2.GetRawButton(8))
+				panik = true;
+			else if(joy2.GetRawButton(9))
+				panik = false;
+
+			//if(joy.GetRawButton(8)){
+				//eleCam.SetFPS(15);
+				//climbCam.SetFPS(0);
+			//}else if(joy.GetRawButton(7)){
+				//eleCam.SetFPS(0);
+				//climbCam.SetFPS(15);
+			//}
 			pickup.update(joy2.GetRawButton(6));
 			eject.update(joy2.GetRawButton(1));
 			ejectHi.update(joy2.GetRawButton(4));
@@ -339,8 +383,7 @@ public:
 			if(pickup.isPressed())
 				pick.Toggle();
 
-			if(eject.isPressed())
-				ele.PushLo();
+				ele.PushLo(eject.getState());
 
 			if(ejectHi.isPressed())
 				ele.PushHi();
@@ -361,18 +404,32 @@ public:
 			if(shift.isPressed())
 				drive.Shift();
 
-			pick.WheelSpeed(joy2.GetRawAxis(4)); //:(
+			pick.WheelSpeed(deadzone(joy2.GetRawAxis(4))); //:(
 
-			//ele.Move(joy2.GetRawAxis(1));
+			if(!panik)
+			ele.Move(deadzone(-joy2.GetRawAxis(1)));
 
-			drive.Drive(deadzone(joy.GetRawAxis(1)), deadzone(joy.GetRawAxis(4)), true);
+			drive.Drive(deadzone(joy.GetRawAxis(1)), deadzone(joy.GetRawAxis(4)), false);
 
 			//ele.Refresh();
+
+			if(joy2.GetRawButton(7))
+				climber.Set(frc::DoubleSolenoid::Value::kForward);
+			else if(joy2.GetRawButton(8))
+				climber.Set(frc::DoubleSolenoid::Value::kReverse);
 
 			SmartDashboard::PutNumber("Left Encoder Vel", drive.GetEncVel()[0]);
 			SmartDashboard::PutNumber("Right Encoder Vel", drive.GetEncVel()[1]);
 			//SmartDashboard::PutNumber("Total Amps", pdp.GetTotalCurrent());
 			//SmartDashboard::PutNumber("Total Power", pdp.GetTotalPower());
+
+			SmartDashboard::PutNumber("Pressure", (((pressure.GetValue()-404)/3418)*120));
+
+			//Logger::Data
+
+			//Logger::instance()->logCSV();
+
+
 
 			frc::Wait(0.005);
 		}

@@ -8,6 +8,8 @@
 
 #include"Elevator.h"
 #include<iostream>
+#include"WPILib.h"
+#include"ctre/Phoenix.h"
 
 Elevator::Elevator(uint8_t motorID, int PCM, int fwdsolenoid, int revsolenoid, int presToggleHi, int presToggleHiOff, int presToggleLo,  int tlimit, int blimit){
 
@@ -35,37 +37,61 @@ Elevator::Elevator(uint8_t motorID, int PCM, int fwdsolenoid, int revsolenoid, i
 
 	//Sets hiPres DoubleSolenoid Object to Enum type kReverse. Makes one side of solenoid on.
 	list->hiPresToggle->Set(frc::DoubleSolenoid::Value::kReverse);
-	list->solenoid->Set(frc::DoubleSolenoid::Value::kReverse);
+	list->solenoid->Set(frc::DoubleSolenoid::Value::kForward);
 
 	//Prints to driver station
 	std::cout << "Ele Init" << std::endl;
+
+	//list->motor->Config_kP(0, 0, 10);
+
+
+	list->motor->SetSelectedSensorPosition(0, 0, 20);
 
 }
 
 //Moves elevator, still need to figure out what negative and positive speeds mean
 void Elevator::Move(double speed){
 
-	//Ramping vv
-	if(speed != 0 && speed < 0 && list->motor->GetSelectedSensorPosition(0) < 2000){
-		speed = -0.2;
-	}else if(speed != 0 && speed > 0 && list->motor->GetSelectedSensorPosition(0) > 10000){
-		speed = 0.2;
+	/*
+		if(speed != 0 && speed < 0 && list->motor->GetSelectedSensorPosition(0) < 2000){
+			speed = -0.2;
+		}else if(speed != 0 && speed > 0 && list->motor->GetSelectedSensorPosition(0) > 10000){
+			speed = 0.2;
+		}
+	*/
+		//if(speed == 0){
+
+			//list->motor->Set(ControlMode::Position, list->pos);
+
+		//}else{
+
+			list->pos = list->motor->GetSelectedSensorPosition(0);
+
+			SmartDashboard::PutNumber("Ele Enc", list->pos);
+
+		if(speed < 0 && list->bottomlimit->Get()){
+			list->motor->Set(ControlMode::PercentOutput, speed);
+		}else if(speed > 0 && list->toplimit->Get()){
+			list->motor->Set(ControlMode::PercentOutput, speed);
+		}else{
+			list->motor->Set(ControlMode::PercentOutput, 0.07);
+		}
+	//}
+}
+
+void Elevator::TargetHeight(double enc){
+
+	while(list->motor->GetSelectedSensorPosition(0) < enc){
+
+		Move(0.8);
 	}
 
-	//If speed < 0 and elevator is at bottom, set the motor to the speed
-	if(speed < 0 && list->bottomlimit->Get()){
-		list->motor->Set(speed);
-	}else if(speed > 0 && list->toplimit->Get()){ //Else the speed > 0 and the elevator is at the top
-		list->motor->Set(speed);
-	}else{
-		list->motor->Set(0); //Else motor is 0
-	}
+	Move(0);
 
 }
 
 //Still questions on this vv
 
-//Eject cube to high pressure
 void Elevator::PushHi(){
 
 	//If cube pushing solenoid is in kForward, switch low pressure solenoid to true, and retract cube pusher
@@ -84,10 +110,9 @@ void Elevator::PushHi(){
 
 }
 
-//Eject cube to low pressure
-void Elevator::PushLo(){
 
-	//If cube pushing solenoid is in kForward, switch to low pressure, and retract cube pusher
+void Elevator::PushLo(bool push){
+
 	if(list->solenoid->Get() == frc::DoubleSolenoid::Value::kForward){
 		list->hiPresToggle->Set(frc::DoubleSolenoid::Value::kReverse);
 		list->loPresToggle->Set(true);
@@ -100,7 +125,15 @@ void Elevator::PushLo(){
 		list->solenoid->Set(frc::DoubleSolenoid::Value::kForward);
 	}
 
+	if(push){
+		list->solenoid->Set(frc::DoubleSolenoid::Value::kReverse);
+	}else{
+		list->solenoid->Set(frc::DoubleSolenoid::Value::kForward);
+	}
 
 
 }
 
+double  Elevator::getHeight(){
+	return list->motor->GetSelectedSensorPosition(0);
+}
