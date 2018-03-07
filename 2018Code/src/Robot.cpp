@@ -1,4 +1,3 @@
-
 #include"WPILib.h"
 #include"ctre/Phoenix.h"
 #include"Drivetrain.h"
@@ -67,12 +66,16 @@ public:
 		const std::string sc = "Scale";
 		const std::string l = "Left";
 		const std::string r = "Right";
+		const std::string m = "Middle";
+		const std::string d = "Default";
 
 		chooser.AddDefault("Switch", sw);
 		chooser.AddObject("Scale", sc);
+		chooser.AddObject("Default", d);
 
 		lrchooser.AddDefault("Left", l);
 		lrchooser.AddObject("Right", r);
+		lrchooser.AddObject("Middle", m);
 
 		SmartDashboard::PutData("Auto Modes", &chooser);
 		SmartDashboard::PutData("Select Side", &lrchooser);
@@ -87,15 +90,15 @@ public:
 
 
 
-		double swDist = 132;
-		double alleyDist = 169;
-		double scDist = 298;
+		double swDist = 129; //-3 in for bumpers
+		double alleyDist = 166; //-3 in for bumpers
+		double scDist = 295; //-3 in for bumpers
 		double swAlley = 103;
 		double scAlley = 136;
 		double swDistFinal = 40;
 		double scDistFinal = 21;
-		double swApproachDist = 25;
-		double scApproachDist = 11.4;
+		double swApproachDist = 22; //-3 in for bumpers
+		double scApproachDist = 8.4; //-3 in for bumpers
 		double SpeedFast = -.7; // -0.7
 		double SpeedSlow = -.4; // -0.4
 		double SpeedZoomi = -0.9;
@@ -135,7 +138,7 @@ public:
 							sel = 1;
 							//Robot On Left, Switch on Right
 						}
-					}else{
+					}else if(selected == "Scale"){
 						if(scSide == "Left"){
 							sel = 2;
 							//Robot On Left, Scale on Left
@@ -143,10 +146,12 @@ public:
 							sel = 3;
 							//Robot On Left, Scale on Right
 						}
+					}else{
+						sel = 201;
 					}
 
 
-				}else{
+				}else if(side == "Right"){
 					if(selected == "Switch"){
 						if(swSide == "Left"){
 							sel = 4;
@@ -155,7 +160,7 @@ public:
 							sel = 5;
 							//Robot On Right, Switch On Right
 						}
-					}else{
+					}else if(selected == "Scale"){
 						if(scSide == "Left"){
 							sel = 6;
 							//Robot On Right, Scale on Left
@@ -163,7 +168,24 @@ public:
 							sel = 7;
 							//Robot On Right, Scale On Right
 					}
+				}else{
+					sel = 201;
 				}
+				}else{
+					if(selected != "Default"){
+						if(swSide == "Left"){
+							//Robot In Middle Switch On Left
+
+
+						}else{
+							//Robot In Middle Switch On Right
+
+
+						}
+
+					}else{
+						sel = 201;
+					}
 				}
 
 
@@ -281,10 +303,24 @@ public:
 					ele.PushLo(true);
 				break;
 
+				case 8 :
+
+
+
+
+				break;
+
+				case 9 :
+
+
+
+				break;
+
 				default :
 					//Just Go FWD
 					SmartDashboard::PutString("Auton Info", "No Auton, Just going fwd and stoping");
-						auton.Drive(SpeedFast, 30, 100);
+						auton.Drive(SpeedFast, 30, 12
+								);
 				break;
 
 				}
