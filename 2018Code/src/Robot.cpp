@@ -86,9 +86,11 @@ public:
 
 	}
 
+
 	void Autonomous() {
 
-
+		drive.SetEncPos(0, 0);
+		drive.setGyroAngle(0);
 
 		double swDist = 129; //-3 in for bumpers
 		double alleyDist = 166; //-3 in for bumpers
@@ -125,6 +127,9 @@ public:
 		std::cout << "Side Selected " << side << std::endl;
 		std::cout << "Switch Side " << swSide << std::endl;
 		std::cout << "Scale Side " << scSide << std::endl;
+
+		drive.SetEncPos(0, 0);
+		drive.setGyroAngle(0);
 
 
 		int sel = 0;
@@ -188,6 +193,8 @@ public:
 					}
 				}
 
+				drive.SetEncPos(0, 0);
+				drive.setGyroAngle(0);
 
 				switch(sel){
 				case 0 :
@@ -251,7 +258,7 @@ public:
 					//RSL
 					SmartDashboard::PutString("Auton Info", "Robot on right, going for switch on left");
 					auton.Drive(SpeedZoomi, alleyDist, 100);
-					auton.Rotate(52);
+					auton.Rotate(49); //Subtracted 3 deg
 					auton.Drive(SpeedZoomi, (swAlley+25), 100);
 					auton.Rotate(55);
 					auton.Drive(SpeedSlow, swDistFinal, 8);
@@ -267,7 +274,7 @@ public:
 					//RSR
 					SmartDashboard::PutString("Auton Info", "Robot on right, going for switch on right");
 					auton.Drive(SpeedFast, swDist, 100);
-					auton.Rotate(55);
+					auton.Rotate(52); //Subtracted 3 deg
 					auton.Drive(SpeedSlow, swApproachDist, 7);
 					pick.Grab();
 					frc::Wait(1);
@@ -280,7 +287,7 @@ public:
 					//RSCL
 					SmartDashboard::PutString("Auton Info", "Robot on right, going for scale on left");
 					auton.Drive(SpeedZoomi, alleyDist, 100);
-					auton.Rotate(50);
+					auton.Rotate(47); //Subtracted 3 deg
 					auton.Drive(SpeedZoomi, (scAlley+25), 100);
 					auton.Rotate(-55);
 					auton.Drive(SpeedSlow, scDistFinal, 100);
@@ -295,7 +302,7 @@ public:
 					//RSCR
 					SmartDashboard::PutString("Auton Info", "Robot on right, going for scale on right");
 					auton.Drive(SpeedFast, scDist, 100);
-					auton.Rotate(55);
+					auton.Rotate(52); //Subtracted 3 deg
 					//auton.Drive(-SpeedSlow, 5, 8);
 					pick.Grab();
 					frc::Wait(1);
