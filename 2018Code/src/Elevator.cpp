@@ -53,6 +53,11 @@ void Elevator::Move(double speed){
 		list->pos = list->motor->GetSelectedSensorPosition(0);
 
 		SmartDashboard::PutNumber("Ele Enc", list->pos);
+		SmartDashboard::PutBoolean("Lower Limit", list->bottomlimit->Get());
+		SmartDashboard::PutBoolean("Top Limit", list->toplimit->Get());
+
+		if(!list->bottomlimit->Get())
+			list->motor->SetSelectedSensorPosition(0, 0, 10);
 
 	if(speed < 0 && list->bottomlimit->Get()){
 		list->motor->Set(ControlMode::PercentOutput, speed);
@@ -66,7 +71,7 @@ void Elevator::Move(double speed){
 
 void Elevator::TargetHeight(double enc){
 
-	while(list->motor->GetSelectedSensorPosition(0) < enc){
+	while(list->motor->GetSelectedSensorPosition(0) < enc  && list->toplimit->Get()){
 
 		Move(0.8);
 

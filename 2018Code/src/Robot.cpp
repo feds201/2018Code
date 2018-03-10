@@ -105,7 +105,7 @@ public:
 		double SpeedSlow = -.4; // -0.4
 		double SpeedZoomi = -0.9;
 		int eleMiddle = 17600;
-		int eleHigh = 35270;
+		int eleHigh = 33000;
 
 		std::string selected = chooser.GetSelected();
 		std::string side = lrchooser.GetSelected();
@@ -303,7 +303,6 @@ public:
 					SmartDashboard::PutString("Auton Info", "Robot on right, going for scale on right");
 					auton.Drive(SpeedFast, scDist, 100);
 					auton.Rotate(52); //Subtracted 3 deg
-					//auton.Drive(-SpeedSlow, 5, 8);
 					pick.Grab();
 					frc::Wait(1);
 					ele.TargetHeight(eleHigh);
