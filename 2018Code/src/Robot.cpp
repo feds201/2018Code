@@ -107,6 +107,15 @@ public:
 		int eleMiddle = 17600;
 		int eleHigh = 33000;
 
+		/*
+		 *
+		 *
+		 * COMMENTED OUT FINAL APPROACH ON ALL CROSS FEILD SCALE AUTONS
+		 *
+		 *
+		 *
+		 */
+
 		std::string selected = chooser.GetSelected();
 		std::string side = lrchooser.GetSelected();
 		std::string gameInfo = frc::DriverStation::GetInstance().GetGameSpecificMessage();
@@ -246,7 +255,7 @@ public:
 						auton.Rotate(-57);
 						auton.Drive(SpeedZoomi, scAlley, 100);
 						auton.Rotate(57);
-						auton.Drive(SpeedSlow, scDistFinal, 100);
+						//auton.Drive(SpeedSlow, scDistFinal, 100);
 						pick.Grab();
 						frc::Wait(1);
 						ele.TargetHeight(eleHigh);
@@ -290,7 +299,7 @@ public:
 					auton.Rotate(47); //Subtracted 3 deg
 					auton.Drive(SpeedZoomi, (scAlley+25), 100);
 					auton.Rotate(-55);
-					auton.Drive(SpeedSlow, scDistFinal, 100);
+					//auton.Drive(SpeedSlow, scDistFinal, 100);
 					pick.Grab();
 					frc::Wait(1);
 					ele.TargetHeight(eleHigh);
