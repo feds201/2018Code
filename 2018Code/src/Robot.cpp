@@ -36,14 +36,14 @@ public:
 	joy(0),
 	joy2(1),
 	comp(8),
-	auton(&drive),
+	auton(&drive, this),
 	shift(joy.GetRawButton(1)),
 	pickup(joy2.GetRawButton(5)),
 	eject(joy2.GetRawButton(1)),
 	ejectHi(joy2.GetRawButton(4)),
 	clamp(joy2.GetRawButton(6)),
 	pick(0, 7, 8, 3, 4, 5, 6),
-	ele(5, 8, 6, 7, 3, 4, 5, 0, 1),
+	ele(5, 8, 6, 7, 3, 4, 5, 0, 1, this),
 	climber(0, 1, 2),
 	cam1(),
 	cam2(),
@@ -98,8 +98,8 @@ public:
 		double swAlley = 103;
 		double scAlley = 136;
 		double swDistFinal = 40;
-		double scDistFinal = 21;
-		double swApproachDist = 22; //-3 in for bumpers
+		double scDistFinal = 10;
+		double swApproachDist = 40; //-3 in for bumpers //Added 12 in bacause robot wasn't contacting switch
 		double scApproachDist = 8.4; //-3 in for bumpers
 		double SpeedFast = -.7; // -0.7
 		double SpeedSlow = -.4; // -0.4
@@ -211,7 +211,8 @@ public:
 					SmartDashboard::PutString("Auton Info", "Robot on left, going for switch on left");
 						auton.Drive(SpeedFast, swDist, 100);
 						auton.Rotate(-55);
-						auton.Drive(SpeedSlow, swApproachDist, 7);
+						auton.Drive(SpeedSlow, swApproachDist, 9);
+						drive.Drive(0, 0, false);
 						pick.Grab();
 						frc::Wait(1);
 						ele.TargetHeight(eleMiddle);
@@ -230,7 +231,7 @@ public:
 						drive.Drive(0, 0, false);
 						pick.Grab();
 						frc::Wait(1);
-						ele.TargetHeight(eleMiddle);
+						ele.TargetHeight(eleMiddle+7700);
 						ele.PushLo(true);
 
 				break;
@@ -240,7 +241,8 @@ public:
 					SmartDashboard::PutString("Auton Info", "Robot on left, going for scale on left");
 						auton.Drive(SpeedFast, scDist, 100);
 						auton.Rotate(-55);
-						auton.Drive(-SpeedSlow, 5, 3);
+						//auton.Drive(SpeedSlow, 5, 100);
+						drive.Drive(0, 0, false);
 						pick.Grab();
 						frc::Wait(1);
 						ele.TargetHeight(eleHigh);
@@ -255,7 +257,8 @@ public:
 						auton.Rotate(-57);
 						auton.Drive(SpeedZoomi, scAlley, 100);
 						auton.Rotate(57);
-						//auton.Drive(SpeedSlow, scDistFinal, 100);
+						auton.Drive(SpeedSlow, scDistFinal, 100);
+						drive.Drive(0, 0, false);
 						pick.Grab();
 						frc::Wait(1);
 						ele.TargetHeight(eleHigh);
@@ -274,7 +277,7 @@ public:
 					drive.Drive(0, 0, false);
 					pick.Grab();
 					frc::Wait(1);
-					ele.TargetHeight(eleMiddle);
+					ele.TargetHeight(eleMiddle+7700);
 					ele.PushLo(true);
 
 				break;
@@ -284,7 +287,8 @@ public:
 					SmartDashboard::PutString("Auton Info", "Robot on right, going for switch on right");
 					auton.Drive(SpeedFast, swDist, 100);
 					auton.Rotate(52); //Subtracted 3 deg
-					auton.Drive(SpeedSlow, swApproachDist, 7);
+					auton.Drive(SpeedSlow, swApproachDist, 9);
+					drive.Drive(0, 0, false);
 					pick.Grab();
 					frc::Wait(1);
 					ele.TargetHeight(eleMiddle);
@@ -299,7 +303,8 @@ public:
 					auton.Rotate(47); //Subtracted 3 deg
 					auton.Drive(SpeedZoomi, (scAlley+25), 100);
 					auton.Rotate(-55);
-					//auton.Drive(SpeedSlow, scDistFinal, 100);
+					auton.Drive(SpeedSlow, scDistFinal, 100);
+					drive.Drive(0, 0, false);
 					pick.Grab();
 					frc::Wait(1);
 					ele.TargetHeight(eleHigh);
@@ -312,6 +317,8 @@ public:
 					SmartDashboard::PutString("Auton Info", "Robot on right, going for scale on right");
 					auton.Drive(SpeedFast, scDist, 100);
 					auton.Rotate(52); //Subtracted 3 deg
+					//auton.Drive(SpeedSlow, 5, 100);
+					drive.Drive(0, 0, false);
 					pick.Grab();
 					frc::Wait(1);
 					ele.TargetHeight(eleHigh);
@@ -405,6 +412,7 @@ public:
 		climber.Set(frc::DoubleSolenoid::Value::kReverse);
 		bool panik = false;
 		drive.SetEncPos(0, 0);
+		int press;
 
 		while (IsOperatorControl() && IsEnabled()) {
 
@@ -474,7 +482,11 @@ public:
 			//SmartDashboard::PutNumber("Total Amps", pdp.GetTotalCurrent());
 			//SmartDashboard::PutNumber("Total Power", pdp.GetTotalPower());
 
-			SmartDashboard::PutNumber("Pressure", (((pressure.GetValue()-404)/3418)*120));
+			press = (double)((((double)pressure.GetValue()-404.0)/3418.0)*120.0);
+
+			SmartDashboard::PutBoolean("Good To Climb?", press >= 45 ? true : false);
+
+			SmartDashboard::PutNumber("Pressure", press); //(((pressure.GetValue()-404)/3418)*120))
 
 			//Logger::Data
 

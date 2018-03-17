@@ -214,6 +214,12 @@ void Drivetrain::SetEncPos(double left, double right){
 
 	list->Left2->SetSelectedSensorPosition(left, 0, 10);
 	list->Right2->SetSelectedSensorPosition(right, 0, 10);
+
+	frc::Wait(0.1);
+
+	list->Left2->SetSelectedSensorPosition(left, 0, 10);
+	list->Right2->SetSelectedSensorPosition(right, 0, 10);
+
 }
 
 double Drivetrain::getGyroAngle(){

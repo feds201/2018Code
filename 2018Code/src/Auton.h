@@ -18,7 +18,7 @@ class Auton{
 
 public:
 
-Auton(Drivetrain* drive);
+Auton(Drivetrain* drive, SampleRobot* robot);
 void Drive(double speed, double dist, float current);
 void Rotate(double angle);
 void Arc(double speed, double turnAngle, double radius);
@@ -34,6 +34,7 @@ private:
 
 		Timer timer;
 
+		SampleRobot* Robot;
 
 		bool hasTurned = false;
 		bool offSet = 8;

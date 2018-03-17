@@ -11,7 +11,7 @@
 #include"WPILib.h"
 #include"ctre/Phoenix.h"
 
-Elevator::Elevator(uint8_t motorID, int PCM, int fwdsolenoid, int revsolenoid, int presToggleHi, int presToggleHiOff, int presToggleLo,  int tlimit, int blimit){
+Elevator::Elevator(uint8_t motorID, int PCM, int fwdsolenoid, int revsolenoid, int presToggleHi, int presToggleHiOff, int presToggleLo,  int tlimit, int blimit, SampleRobot* robot){
 
 	list = new struct EList;
 	list->motor = new WPI_TalonSRX(motorID);
@@ -20,6 +20,8 @@ Elevator::Elevator(uint8_t motorID, int PCM, int fwdsolenoid, int revsolenoid, i
 	list->loPresToggle = new Solenoid(PCM, presToggleLo);
 	list->toplimit = new DigitalInput(tlimit);
 	list->bottomlimit = new DigitalInput(blimit);
+
+	list->Robot = robot;
 
 	list->motor->ConfigSelectedFeedbackSensor(FeedbackDevice::CTRE_MagEncoder_Absolute, 0, 10);
 
@@ -52,6 +54,10 @@ void Elevator::Move(double speed){
 
 		list->pos = list->motor->GetSelectedSensorPosition(0);
 
+		list->maxCurr = list->motor->GetOutputCurrent() > list->maxCurr ? list->motor->GetOutputCurrent() : list->maxCurr;
+
+		SmartDashboard::PutNumber("Ele Max Curr", list->maxCurr);
+
 		SmartDashboard::PutNumber("Ele Enc", list->pos);
 		SmartDashboard::PutBoolean("Lower Limit", list->bottomlimit->Get());
 		SmartDashboard::PutBoolean("Top Limit", list->toplimit->Get());
@@ -71,9 +77,9 @@ void Elevator::Move(double speed){
 
 void Elevator::TargetHeight(double enc){
 
-	while(list->motor->GetSelectedSensorPosition(0) < enc  && list->toplimit->Get()){
+	while(list->motor->GetSelectedSensorPosition(0) < enc  && list->toplimit->Get() && list->Robot->IsAutonomous() && list->Robot->IsEnabled()){
 
-		Move(0.8);
+		Move(0.9);
 
 	}
 

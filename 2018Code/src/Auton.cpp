@@ -9,9 +9,11 @@
 
 
 
-Auton::Auton(Drivetrain * drive){
+Auton::Auton(Drivetrain * drive, SampleRobot* robot){
 
 	list = new struct AutonList;
+
+	list->Robot = robot;
 
 	list->drive = drive;
 
@@ -29,7 +31,7 @@ if(list->hasTurned)
 list->drive->SetEncPos(0, 0);
 list->drive->setGyroAngle(0);
 
-while((abs(list->drive->GetEncPos()[1])+abs(list->drive->GetEncPos()[0]))/2 < dist && (list->drive->GetCurr()[0]+list->drive->GetCurr()[1])/2 < current){
+while((abs(list->drive->GetEncPos()[1])+abs(list->drive->GetEncPos()[0]))/2 < dist && (list->drive->GetCurr()[0]+list->drive->GetCurr()[1])/2 < current && list->Robot->IsEnabled() && list->Robot->IsAutonomous()){
 	list->drive->Drive(speed, 0, true);
 }
 	list->drive->Drive(0, 0, true);
@@ -43,13 +45,13 @@ void Auton::Rotate(double angle){
 
 	if(angle < 0){
 
-		while(list->drive->getGyroAngle() > angle){
+		while(list->drive->getGyroAngle() > angle && list->Robot->IsAutonomous() && list->Robot->IsEnabled()){
 			list->drive->Drive(0, 0.5, false);
 		}
 
 	}else{
 
-		while(list->drive->getGyroAngle() < angle){
+		while(list->drive->getGyroAngle() < angle && list->Robot->IsAutonomous() && list->Robot->IsEnabled()){
 			list->drive->Drive(0, -0.5, false);
 		}
 

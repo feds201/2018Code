@@ -13,7 +13,7 @@
 class Elevator{
 
 public:
-	Elevator(uint8_t motorID, int PCM, int fwdsolenoid, int revsolenoid, int presToggleHi, int presToggleHiOff, int presToggleLo, int tlimit, int blimit);
+	Elevator(uint8_t motorID, int PCM, int fwdsolenoid, int revsolenoid, int presToggleHi, int presToggleHiOff, int presToggleLo, int tlimit, int blimit, SampleRobot* robot);
 	void Move(double speed);
 	void TargetHeight(double enc);
 	double getHeight();
@@ -29,6 +29,8 @@ private:
 
 	struct EList{
 
+		SampleRobot *Robot;
+
 		WPI_TalonSRX *motor;
 		DoubleSolenoid *solenoid;
 		DoubleSolenoid *hiPresToggle;
@@ -43,6 +45,7 @@ private:
 		bool wasbottom = false;
 		double pos = 0;
 		bool panik = false;
+		double maxCurr = 0;
 
 	};
 
