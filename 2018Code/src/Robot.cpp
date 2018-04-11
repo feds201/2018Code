@@ -119,6 +119,7 @@ public:
 		std::string selected = chooser.GetSelected();
 		std::string side = lrchooser.GetSelected();
 		std::string gameInfo = frc::DriverStation::GetInstance().GetGameSpecificMessage();
+		DriverStation::Alliance alliance = DriverStation::GetInstance().GetAlliance();
 		std::string swSide = "";
 		std::string scSide = "";
 
@@ -209,20 +210,33 @@ public:
 				case 0 :
 					//LSL
 					SmartDashboard::PutString("Auton Info", "Robot on left, going for switch on left");
-						auton.Drive(SpeedFast, swDist, 100);
-						auton.Rotate(-55);
-						auton.Drive(SpeedSlow, swApproachDist, 9);
-						drive.Drive(0, 0, false);
-						pick.Grab();
-						frc::Wait(1);
-						ele.TargetHeight(eleMiddle);
-						ele.PushLo(true);
 
+						if(alliance == DriverStation::Alliance::kBlue){
+							auton.Drive(SpeedFast, swDist, 100);
+							auton.Rotate(-55);
+							auton.Drive(SpeedSlow, swApproachDist, 9);
+							drive.Drive(0, 0, false);
+							pick.Grab();
+							frc::Wait(1);
+							ele.TargetHeight(eleMiddle);
+							ele.PushLo(true);
+						}else if(alliance == DriverStation::Alliance::kRed){
+							auton.Drive(SpeedFast, swDist, 100);
+							auton.Rotate(-55);
+							auton.Drive(SpeedSlow, swApproachDist, 9);
+							drive.Drive(0, 0, false);
+							pick.Grab();
+							frc::Wait(1);
+							ele.TargetHeight(eleMiddle);
+							ele.PushLo(true);
+						}
 				break;
 
 				case 1 :
 					//LSR
 					SmartDashboard::PutString("Auton Info", "Robot on left, going for switch on right");
+
+					if(alliance == DriverStation::Alliance::kBlue){
 						auton.Drive(SpeedZoomi, alleyDist, 100);
 						auton.Rotate(-55);
 						auton.Drive(SpeedZoomi, swAlley, 100);
@@ -233,12 +247,35 @@ public:
 						frc::Wait(1);
 						ele.TargetHeight(eleMiddle+7700);
 						ele.PushLo(true);
-
+					}else if(alliance == DriverStation::Alliance::kRed){
+						auton.Drive(SpeedZoomi, alleyDist, 100);
+						auton.Rotate(-55);
+						auton.Drive(SpeedZoomi, swAlley, 100);
+						auton.Rotate(-55);
+						auton.Drive(SpeedSlow, swDistFinal, 8);
+						drive.Drive(0, 0, false);
+						pick.Grab();
+						frc::Wait(1);
+						ele.TargetHeight(eleMiddle+7700);
+						ele.PushLo(true);
+					}
 				break;
 
 				case 2 :
 					//LSCL
 					SmartDashboard::PutString("Auton Info", "Robot on left, going for scale on left");
+
+					if(alliance == DriverStation::Alliance::kBlue){
+						auton.Drive(SpeedFast, scDist, 100);
+						auton.Rotate(-55);
+						//auton.Drive(SpeedSlow, 5, 100);
+						drive.Drive(0, 0, false);
+						pick.Grab();
+						frc::Wait(1);
+						ele.TargetHeight(eleHigh);
+						ele.PushLo(true);
+					}else if(alliance == DriverStation::Alliance::kRed){
+
 						auton.Drive(SpeedFast, scDist, 100);
 						auton.Rotate(-55);
 						//auton.Drive(SpeedSlow, 5, 100);
@@ -248,26 +285,48 @@ public:
 						ele.TargetHeight(eleHigh);
 						ele.PushLo(true);
 
+					}
 				break;
 
 				case 3 :
 					//LSCR
 					SmartDashboard::PutString("Auton Info", "Robot on left, going for scale on right");
-						auton.Drive(SpeedZoomi, alleyDist, 100);
-						auton.Rotate(-57);
-						auton.Drive(SpeedZoomi, scAlley, 100);
-						auton.Rotate(57);
-						auton.Drive(SpeedSlow, scDistFinal, 100);
-						drive.Drive(0, 0, false);
-						pick.Grab();
-						frc::Wait(1);
-						ele.TargetHeight(eleHigh);
-						ele.PushLo(true);
 
+						if(alliance == DriverStation::Alliance::kBlue){
+
+						auton.Drive(SpeedZoomi, alleyDist, 100);
+						//auton.Rotate(-57);
+						//auton.Drive(SpeedZoomi, scAlley, 100);
+						//auton.Rotate(57);
+						//auton.Drive(SpeedSlow, scDistFinal, 100);
+						drive.Drive(0, 0, false);
+						//pick.Grab();
+						//frc::Wait(1);
+						//ele.TargetHeight(eleHigh);
+						//ele.PushLo(true);
+
+						}else if(alliance == DriverStation::Alliance::kRed){
+
+							auton.Drive(SpeedZoomi, alleyDist, 100);
+							//auton.Rotate(-57);
+							//auton.Drive(SpeedZoomi, scAlley, 100);
+							//auton.Rotate(57);
+							//auton.Drive(SpeedSlow, scDistFinal, 100);
+							drive.Drive(0, 0, false);
+							//pick.Grab();
+							//frc::Wait(1);
+							//ele.TargetHeight(eleHigh);
+							//ele.PushLo(true);
+
+
+						}
 				break;
 
 				case 4 :
 					//RSL
+
+					if(alliance == DriverStation::Alliance::kBlue){
+
 					SmartDashboard::PutString("Auton Info", "Robot on right, going for switch on left");
 					auton.Drive(SpeedZoomi, alleyDist, 100);
 					auton.Rotate(49); //Subtracted 3 deg
@@ -280,10 +339,29 @@ public:
 					ele.TargetHeight(eleMiddle+7700);
 					ele.PushLo(true);
 
+					}else if(alliance == DriverStation::Alliance::kRed){
+
+						SmartDashboard::PutString("Auton Info", "Robot on right, going for switch on left");
+						auton.Drive(SpeedZoomi, alleyDist, 100);
+						auton.Rotate(49); //Subtracted 3 deg
+						auton.Drive(SpeedZoomi, (swAlley+25), 100);
+						auton.Rotate(55);
+						auton.Drive(SpeedSlow, swDistFinal, 8);
+						drive.Drive(0, 0, false);
+						pick.Grab();
+						frc::Wait(1);
+						ele.TargetHeight(eleMiddle+7700);
+						ele.PushLo(true);
+
+
+					}
 				break;
 
 				case 5 :
 					//RSR
+
+					if(alliance == DriverStation::Alliance::kBlue){
+
 					SmartDashboard::PutString("Auton Info", "Robot on right, going for switch on right");
 					auton.Drive(SpeedFast, swDist, 100);
 					auton.Rotate(52); //Subtracted 3 deg
@@ -293,27 +371,61 @@ public:
 					frc::Wait(1);
 					ele.TargetHeight(eleMiddle);
 					ele.PushLo(true);
+					}else if(alliance == DriverStation::Alliance::kRed){
 
+						SmartDashboard::PutString("Auton Info", "Robot on right, going for switch on right");
+						auton.Drive(SpeedFast, swDist, 100);
+						auton.Rotate(52); //Subtracted 3 deg
+						auton.Drive(SpeedSlow, swApproachDist, 9);
+						drive.Drive(0, 0, false);
+						pick.Grab();
+						frc::Wait(1);
+						ele.TargetHeight(eleMiddle);
+						ele.PushLo(true);
+
+
+					}
 				break;
 
 				case 6 :
 					//RSCL
+
+					if(alliance == DriverStation::Alliance::kBlue){
+
 					SmartDashboard::PutString("Auton Info", "Robot on right, going for scale on left");
 					auton.Drive(SpeedZoomi, alleyDist, 100);
-					auton.Rotate(47); //Subtracted 3 deg
-					auton.Drive(SpeedZoomi, (scAlley+25), 100);
-					auton.Rotate(-55);
-					auton.Drive(SpeedSlow, scDistFinal, 100);
+					//auton.Rotate(47); //Subtracted 3 deg
+					//auton.Drive(SpeedZoomi, (scAlley+25), 100);
+					//auton.Rotate(-55);
+					//auton.Drive(SpeedSlow, scDistFinal, 100);
 					drive.Drive(0, 0, false);
-					pick.Grab();
-					frc::Wait(1);
-					ele.TargetHeight(eleHigh);
-					ele.PushLo(true);
+					//pick.Grab();
+					//frc::Wait(1);
+					//ele.TargetHeight(eleHigh);
+					//ele.PushLo(true);
+					}else if(alliance == DriverStation::Alliance::kRed){
 
+						SmartDashboard::PutString("Auton Info", "Robot on right, going for scale on left");
+						auton.Drive(SpeedZoomi, alleyDist, 100);
+						//auton.Rotate(47); //Subtracted 3 deg
+						//auton.Drive(SpeedZoomi, (scAlley+25), 100);
+						//auton.Rotate(-55);
+						//auton.Drive(SpeedSlow, scDistFinal, 100);
+						drive.Drive(0, 0, false);
+						//pick.Grab();
+						//frc::Wait(1);
+						//ele.TargetHeight(eleHigh);
+						//ele.PushLo(true);
+
+
+					}
 				break;
 
 				case 7 :
 					//RSCR
+
+					if(alliance == DriverStation::Alliance::kBlue){
+
 					SmartDashboard::PutString("Auton Info", "Robot on right, going for scale on right");
 					auton.Drive(SpeedFast, scDist, 100);
 					auton.Rotate(52); //Subtracted 3 deg
@@ -323,16 +435,49 @@ public:
 					frc::Wait(1);
 					ele.TargetHeight(eleHigh);
 					ele.PushLo(true);
+					}else if(alliance == DriverStation::Alliance::kRed){
+
+						SmartDashboard::PutString("Auton Info", "Robot on right, going for scale on right");
+						auton.Drive(SpeedFast, scDist, 100);
+						auton.Rotate(52); //Subtracted 3 deg
+						//auton.Drive(SpeedSlow, 5, 100);
+						drive.Drive(0, 0, false);
+						pick.Grab();
+						frc::Wait(1);
+						ele.TargetHeight(eleHigh);
+						ele.PushLo(true);
+
+
+					}
+
 				break;
 
 				case 8 :
 
+					if(alliance == DriverStation::Alliance::kBlue){
+
+
+
+					}else if(alliance == DriverStation::Alliance::kRed){
+
+
+
+					}
 
 
 
 				break;
 
 				case 9 :
+
+					if(alliance == DriverStation::Alliance::kBlue){
+
+
+
+					}else if(alliance == DriverStation::Alliance::kRed){
+
+
+					}
 
 
 

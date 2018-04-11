@@ -56,7 +56,7 @@ void Elevator::Move(double speed){
 
 		list->maxCurr = list->motor->GetOutputCurrent() > list->maxCurr ? list->motor->GetOutputCurrent() : list->maxCurr;
 
-		SmartDashboard::PutNumber("Ele Max Curr", list->maxCurr);
+		SmartDashboard::PutNumber("Ele Max Curr", list->motor->GetOutputCurrent());
 
 		SmartDashboard::PutNumber("Ele Enc", list->pos);
 		SmartDashboard::PutBoolean("Lower Limit", list->bottomlimit->Get());
