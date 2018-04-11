@@ -92,13 +92,13 @@ public:
 		drive.SetEncPos(0, 0);
 		drive.setGyroAngle(0);
 
-		double swDist = 129; //-3 in for bumpers
-		double alleyDist = 166; //-3 in for bumpers
-		double scDist = 295; //-3 in for bumpers
-		double swAlley = 103;
+		double swDist = 129; //-3 in for bumpers //-25" total
+		double alleyDist = 166; //-3 in for bumpers //-56" total
+		double scDist = 295; //-3 in for bumpers //-15" total
+		double swAlley = 103; //
 		double scAlley = 136;
 		double swDistFinal = 40;
-		double scDistFinal = 10;
+		double scDistFinal = 4;
 		double swApproachDist = 40; //-3 in for bumpers //Added 12 in bacause robot wasn't contacting switch
 		double scApproachDist = 8.4; //-3 in for bumpers
 		double SpeedFast = -.7; // -0.7
@@ -191,10 +191,12 @@ public:
 						if(swSide == "Left"){
 							//Robot In Middle Switch On Left
 
+							sel = 9;
 
 						}else{
 							//Robot In Middle Switch On Right
 
+							sel = 8;
 
 						}
 
@@ -239,7 +241,7 @@ public:
 					if(alliance == DriverStation::Alliance::kBlue){
 						auton.Drive(SpeedZoomi, alleyDist, 100);
 						auton.Rotate(-55);
-						auton.Drive(SpeedZoomi, swAlley, 100);
+						auton.Drive(SpeedZoomi, swAlley+25, 100);
 						auton.Rotate(-55);
 						auton.Drive(SpeedSlow, swDistFinal, 8);
 						drive.Drive(0, 0, false);
@@ -250,7 +252,7 @@ public:
 					}else if(alliance == DriverStation::Alliance::kRed){
 						auton.Drive(SpeedZoomi, alleyDist, 100);
 						auton.Rotate(-55);
-						auton.Drive(SpeedZoomi, swAlley, 100);
+						auton.Drive(SpeedZoomi, swAlley+25, 100);
 						auton.Rotate(-55);
 						auton.Drive(SpeedSlow, swDistFinal, 8);
 						drive.Drive(0, 0, false);
@@ -295,28 +297,28 @@ public:
 						if(alliance == DriverStation::Alliance::kBlue){
 
 						auton.Drive(SpeedZoomi, alleyDist, 100);
-						//auton.Rotate(-57);
-						//auton.Drive(SpeedZoomi, scAlley, 100);
-						//auton.Rotate(57);
-						//auton.Drive(SpeedSlow, scDistFinal, 100);
+						auton.Rotate(-55);
+						auton.Drive(SpeedZoomi, scAlley+25, 100);
+						auton.Rotate(55);
+						auton.Drive(SpeedSlow, scDistFinal, 100);
 						drive.Drive(0, 0, false);
-						//pick.Grab();
-						//frc::Wait(1);
-						//ele.TargetHeight(eleHigh);
-						//ele.PushLo(true);
+						pick.Grab();
+						frc::Wait(1);
+						ele.TargetHeight(eleHigh);
+						ele.PushLo(true);
 
 						}else if(alliance == DriverStation::Alliance::kRed){
 
 							auton.Drive(SpeedZoomi, alleyDist, 100);
-							//auton.Rotate(-57);
-							//auton.Drive(SpeedZoomi, scAlley, 100);
-							//auton.Rotate(57);
-							//auton.Drive(SpeedSlow, scDistFinal, 100);
+							auton.Rotate(-55);
+							auton.Drive(SpeedZoomi, scAlley, 100);
+							auton.Rotate(55);
+							auton.Drive(SpeedSlow, scDistFinal, 100);
 							drive.Drive(0, 0, false);
-							//pick.Grab();
-							//frc::Wait(1);
-							//ele.TargetHeight(eleHigh);
-							//ele.PushLo(true);
+							pick.Grab();
+							frc::Wait(1);
+							ele.TargetHeight(eleHigh);
+							ele.PushLo(true);
 
 
 						}
@@ -329,7 +331,7 @@ public:
 
 					SmartDashboard::PutString("Auton Info", "Robot on right, going for switch on left");
 					auton.Drive(SpeedZoomi, alleyDist, 100);
-					auton.Rotate(49); //Subtracted 3 deg
+					auton.Rotate(55); //Subtracted 3 deg
 					auton.Drive(SpeedZoomi, (swAlley+25), 100);
 					auton.Rotate(55);
 					auton.Drive(SpeedSlow, swDistFinal, 8);
@@ -343,7 +345,7 @@ public:
 
 						SmartDashboard::PutString("Auton Info", "Robot on right, going for switch on left");
 						auton.Drive(SpeedZoomi, alleyDist, 100);
-						auton.Rotate(49); //Subtracted 3 deg
+						auton.Rotate(55); //Subtracted 3 deg
 						auton.Drive(SpeedZoomi, (swAlley+25), 100);
 						auton.Rotate(55);
 						auton.Drive(SpeedSlow, swDistFinal, 8);
@@ -364,7 +366,7 @@ public:
 
 					SmartDashboard::PutString("Auton Info", "Robot on right, going for switch on right");
 					auton.Drive(SpeedFast, swDist, 100);
-					auton.Rotate(52); //Subtracted 3 deg
+					auton.Rotate(55); //Subtracted 3 deg
 					auton.Drive(SpeedSlow, swApproachDist, 9);
 					drive.Drive(0, 0, false);
 					pick.Grab();
@@ -375,7 +377,7 @@ public:
 
 						SmartDashboard::PutString("Auton Info", "Robot on right, going for switch on right");
 						auton.Drive(SpeedFast, swDist, 100);
-						auton.Rotate(52); //Subtracted 3 deg
+						auton.Rotate(55); //Subtracted 3 deg
 						auton.Drive(SpeedSlow, swApproachDist, 9);
 						drive.Drive(0, 0, false);
 						pick.Grab();
@@ -394,28 +396,28 @@ public:
 
 					SmartDashboard::PutString("Auton Info", "Robot on right, going for scale on left");
 					auton.Drive(SpeedZoomi, alleyDist, 100);
-					//auton.Rotate(47); //Subtracted 3 deg
-					//auton.Drive(SpeedZoomi, (scAlley+25), 100);
-					//auton.Rotate(-55);
-					//auton.Drive(SpeedSlow, scDistFinal, 100);
+					auton.Rotate(55); //Subtracted 3 deg
+					auton.Drive(SpeedZoomi, (scAlley+25), 100);
+					auton.Rotate(-55);
+					auton.Drive(SpeedSlow, scDistFinal, 100);
 					drive.Drive(0, 0, false);
-					//pick.Grab();
-					//frc::Wait(1);
-					//ele.TargetHeight(eleHigh);
-					//ele.PushLo(true);
+					pick.Grab();
+					frc::Wait(1);
+					ele.TargetHeight(eleHigh);
+					ele.PushLo(true);
 					}else if(alliance == DriverStation::Alliance::kRed){
 
 						SmartDashboard::PutString("Auton Info", "Robot on right, going for scale on left");
 						auton.Drive(SpeedZoomi, alleyDist, 100);
-						//auton.Rotate(47); //Subtracted 3 deg
-						//auton.Drive(SpeedZoomi, (scAlley+25), 100);
-						//auton.Rotate(-55);
-						//auton.Drive(SpeedSlow, scDistFinal, 100);
+						auton.Rotate(55); //Subtracted 3 deg
+						auton.Drive(SpeedZoomi, (scAlley+25), 100);
+						auton.Rotate(-55);
+						auton.Drive(SpeedSlow, scDistFinal, 100);
 						drive.Drive(0, 0, false);
-						//pick.Grab();
-						//frc::Wait(1);
-						//ele.TargetHeight(eleHigh);
-						//ele.PushLo(true);
+						pick.Grab();
+						frc::Wait(1);
+						ele.TargetHeight(eleHigh);
+						ele.PushLo(true);
 
 
 					}
@@ -428,7 +430,7 @@ public:
 
 					SmartDashboard::PutString("Auton Info", "Robot on right, going for scale on right");
 					auton.Drive(SpeedFast, scDist, 100);
-					auton.Rotate(52); //Subtracted 3 deg
+					auton.Rotate(55); //Subtracted 3 deg
 					//auton.Drive(SpeedSlow, 5, 100);
 					drive.Drive(0, 0, false);
 					pick.Grab();
@@ -439,7 +441,7 @@ public:
 
 						SmartDashboard::PutString("Auton Info", "Robot on right, going for scale on right");
 						auton.Drive(SpeedFast, scDist, 100);
-						auton.Rotate(52); //Subtracted 3 deg
+						auton.Rotate(55); //Subtracted 3 deg
 						//auton.Drive(SpeedSlow, 5, 100);
 						drive.Drive(0, 0, false);
 						pick.Grab();
@@ -456,10 +458,31 @@ public:
 
 					if(alliance == DriverStation::Alliance::kBlue){
 
-
+						auton.Drive(SpeedFast, 44, 100);
+						auton.Rotate(55);
+						auton.Drive(SpeedFast, 46, 100);
+						auton.Rotate(-55);
+						drive.SetEncPos(0, 0);
+						auton.Drive(SpeedSlow, 83, 9);
+						drive.Drive(0, 0, false);
+						pick.Grab();
+						frc::Wait(1);
+						ele.TargetHeight(eleMiddle);
+						ele.PushLo(true);
 
 					}else if(alliance == DriverStation::Alliance::kRed){
 
+						auton.Drive(SpeedFast, 44, 100);
+						auton.Rotate(55);
+						auton.Drive(SpeedFast, 46, 100);
+						auton.Rotate(-55);
+						drive.SetEncPos(0, 0);
+						auton.Drive(SpeedSlow, 83, 9);
+						drive.Drive(0, 0, false);
+						pick.Grab();
+						frc::Wait(1);
+						ele.TargetHeight(eleMiddle);
+						ele.PushLo(true);
 
 
 					}
@@ -472,10 +495,31 @@ public:
 
 					if(alliance == DriverStation::Alliance::kBlue){
 
-
+						auton.Drive(SpeedFast, 44, 100);
+						auton.Rotate(55);
+						auton.Drive(SpeedFast, 34, 100);
+						auton.Rotate(-55);
+						drive.SetEncPos(0, 0);
+						auton.Drive(SpeedSlow, 83, 9);
+						drive.Drive(0, 0, false);
+						pick.Grab();
+						frc::Wait(1);
+						ele.TargetHeight(eleMiddle);
+						ele.PushLo(true);
 
 					}else if(alliance == DriverStation::Alliance::kRed){
 
+						auton.Drive(SpeedFast, 44, 100);
+						auton.Rotate(55);
+						auton.Drive(SpeedFast, 34, 100);
+						auton.Rotate(-55);
+						drive.SetEncPos(0, 0);
+						auton.Drive(SpeedSlow, 83, 9);
+						drive.Drive(0, 0, false);
+						pick.Grab();
+						frc::Wait(1);
+						ele.TargetHeight(eleMiddle);
+						ele.PushLo(true);
 
 					}
 
